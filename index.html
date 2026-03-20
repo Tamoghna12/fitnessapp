@@ -1189,11 +1189,38 @@ body::before {
   body { background: white; color: black; }
   .card { border: 1px solid #ddd; }
 }
+
+/* ── Darebee ── */
+.db-filters { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:1.5rem; align-items:center; }
+.db-search { background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px 14px; color:var(--text-primary); font-size:0.9rem; flex:1; min-width:180px; }
+.db-search::placeholder { color:var(--text-muted); }
+.db-filter-btn { background:var(--bg-card); border:1px solid var(--border); border-radius:20px; padding:5px 14px; color:var(--text-secondary); font-size:0.8rem; cursor:pointer; transition:var(--transition); }
+.db-filter-btn.active, .db-filter-btn:hover { background:var(--accent); border-color:var(--accent); color:#fff; }
+.db-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; }
+.db-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:1.2rem; cursor:pointer; transition:var(--transition); position:relative; }
+.db-card:hover { border-color:var(--accent); background:var(--bg-card-hover); transform:translateY(-2px); }
+.db-card-name { font-weight:600; font-size:0.95rem; margin-bottom:6px; line-height:1.3; }
+.db-card-meta { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.db-type-tag { background:var(--bg-elevated); border:1px solid var(--border-subtle); border-radius:12px; padding:2px 10px; font-size:0.72rem; color:var(--text-secondary); }
+.db-stars { color:var(--accent-amber); font-size:0.8rem; letter-spacing:1px; }
+.db-card-desc { font-size:0.8rem; color:var(--text-muted); margin-top:8px; line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.db-detail-back { display:flex; align-items:center; gap:8px; color:var(--text-secondary); cursor:pointer; margin-bottom:1.5rem; font-size:0.9rem; }
+.db-detail-back:hover { color:var(--text-primary); }
+.db-ex-table { width:100%; border-collapse:collapse; }
+.db-ex-table th { text-align:left; font-size:0.75rem; color:var(--text-muted); padding:6px 8px; text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border); }
+.db-ex-table td { padding:10px 8px; border-bottom:1px solid var(--border-subtle); font-size:0.88rem; vertical-align:middle; }
+.db-ex-name { font-weight:500; }
+.db-ex-notes { font-size:0.78rem; color:var(--text-muted); }
+.db-log-input { background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-xs); padding:4px 8px; color:var(--text-primary); font-size:0.82rem; width:70px; text-align:center; }
+.db-source-link { display:inline-flex; align-items:center; gap:6px; color:var(--accent-blue); font-size:0.82rem; text-decoration:none; }
+.db-source-link:hover { text-decoration:underline; }
 </style>
 <!-- Firebase SDKs (compat v9) -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<!-- Darebee workout data -->
+<script src="darebee-data.js"></script>
 </head>
 <body>
 
@@ -1214,6 +1241,7 @@ body::before {
         <button class="nav-btn" data-page="progress">Progress</button>
         <button class="nav-btn" data-page="library">Library</button>
         <button class="nav-btn" data-page="calculators">Calculators</button>
+        <button class="nav-btn" data-page="darebee" style="color:#f59e0b">Darebee</button>
       </nav>
       <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
         <div id="sync-indicator" style="display:none;align-items:center;gap:5px;font-size:0.75rem;color:var(--text-secondary)">
@@ -1496,6 +1524,7 @@ function render() {
   else if (currentPage === "progress") main.innerHTML = renderProgress();
   else if (currentPage === "library") main.innerHTML = renderLibrary();
   else if (currentPage === "calculators") main.innerHTML = renderCalculators();
+  else if (currentPage === "darebee") main.innerHTML = renderDarebee();
   else main.innerHTML = renderWorkout(currentPage);
 
   attachListeners();
@@ -2401,6 +2430,120 @@ function renderCalculators() {
             <div class="formula-eq">South/East Asian: +3.5% BF<br>Hispanic: +1.5% BF<br>African descent: −2% BF<br>Caucasian/Other: baseline</div>
           </div>
         </div>
+      </div>
+    </div>
+  `;
+}
+
+// ════════════════════════════════════════
+// DAREBEE
+// ════════════════════════════════════════
+let dbFilter = 'All';
+let dbSearch = '';
+let dbDetailIdx = null;
+
+const DB_TYPES = ['All', 'Strength', 'MetCon', 'Cardio', 'Yoga', 'Combat', 'Stretching/Mobility', 'HIIT', 'Abs/Core', 'Coordination'];
+
+function renderDarebee() {
+  if (dbDetailIdx !== null) return renderDarebeeDetail(dbDetailIdx);
+
+  const filtered = (typeof DAREBEE_WORKOUTS !== 'undefined' ? DAREBEE_WORKOUTS : []).filter(w => {
+    const matchType = dbFilter === 'All' || w.type === dbFilter;
+    const matchSearch = !dbSearch || w.name.toLowerCase().includes(dbSearch.toLowerCase());
+    return matchType && matchSearch;
+  });
+
+  const stars = d => '★'.repeat(d) + '☆'.repeat(5 - d);
+
+  return `
+    <div class="page active">
+      <div class="page-title" style="color:var(--accent-amber)">Darebee Workouts</div>
+      <div class="page-subtitle">${filtered.length} of ${(typeof DAREBEE_WORKOUTS !== 'undefined' ? DAREBEE_WORKOUTS : []).length} workouts — tap any card to view exercises &amp; log</div>
+
+      <div class="db-filters">
+        <input class="db-search" type="text" placeholder="Search workouts..." value="${dbSearch}"
+          oninput="dbSearch=this.value;render()">
+        ${DB_TYPES.map(t => `
+          <button class="db-filter-btn ${dbFilter===t?'active':''}" onclick="dbFilter='${t}';render()">${t}</button>
+        `).join('')}
+      </div>
+
+      <div class="db-grid">
+        ${filtered.length === 0 ? '<p style="color:var(--text-muted)">No workouts match your filters.</p>' :
+          filtered.map((w, i) => {
+            const origIdx = (typeof DAREBEE_WORKOUTS !== 'undefined' ? DAREBEE_WORKOUTS : []).indexOf(w);
+            return `
+              <div class="db-card" onclick="dbDetailIdx=${origIdx};render()">
+                <div class="db-card-name">${w.name}</div>
+                <div class="db-card-meta">
+                  <span class="db-stars">${stars(w.difficulty||3)}</span>
+                  <span class="db-type-tag">${w.type}</span>
+                </div>
+                ${w.description ? `<div class="db-card-desc">${w.description}</div>` : ''}
+              </div>
+            `;
+          }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderDarebeeDetail(idx) {
+  const w = (typeof DAREBEE_WORKOUTS !== 'undefined' ? DAREBEE_WORKOUTS : [])[idx];
+  if (!w) return '<div class="page active">Not found.</div>';
+  const stars = '★'.repeat(w.difficulty||3) + '☆'.repeat(5-(w.difficulty||3));
+
+  return `
+    <div class="page active">
+      <div class="db-detail-back" onclick="dbDetailIdx=null;render()">← Back to Darebee</div>
+
+      <div class="page-title" style="color:var(--accent-amber)">${w.name}</div>
+      <div class="page-subtitle">
+        <span class="db-stars">${stars}</span>&nbsp;
+        <span class="db-type-tag" style="display:inline-block">${w.type}</span>
+        &nbsp;·&nbsp;
+        <a class="db-source-link" href="${w.url}" target="_blank" rel="noopener">View on Darebee ↗</a>
+      </div>
+
+      ${w.description ? `<div class="card"><p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.6">${w.description}</p></div>` : ''}
+
+      <div class="card" style="overflow-x:auto">
+        <div class="section-label" style="margin-bottom:1rem">💪 Exercises</div>
+        <table class="db-ex-table">
+          <thead>
+            <tr>
+              <th>Exercise</th>
+              <th>Sets</th>
+              <th>Reps / Duration</th>
+              <th>Log Weight</th>
+              <th>Log Reps</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${(w.exercises||[]).map((ex, ei) => {
+              const wKey = `db_${idx}_e${ei}_weight`;
+              const rKey = `db_${idx}_e${ei}_reps`;
+              return `
+                <tr>
+                  <td>
+                    <div class="db-ex-name">${ex.name}</div>
+                    ${ex.notes ? `<div class="db-ex-notes">${ex.notes}</div>` : ''}
+                  </td>
+                  <td style="color:var(--text-secondary)">${ex.sets||'—'}</td>
+                  <td style="color:var(--text-secondary)">${ex.reps||ex.duration||'—'}</td>
+                  <td><input class="db-log-input" type="number" placeholder="kg" value="${state[wKey]||''}" data-key="${wKey}" onchange="saveInput(this)"></td>
+                  <td><input class="db-log-input" type="text" placeholder="reps" value="${state[rKey]||''}" data-key="${rKey}" onchange="saveInput(this)"></td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="section-label">📝 Session Notes</div>
+        <textarea class="notes-area" placeholder="How did it go? Modifications, PRs, thoughts..."
+          data-key="db_notes_${idx}" onchange="saveInput(this)">${state[`db_notes_${idx}`]||''}</textarea>
       </div>
     </div>
   `;
