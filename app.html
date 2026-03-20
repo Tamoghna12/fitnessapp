@@ -1190,6 +1190,10 @@ body::before {
   .card { border: 1px solid #ddd; }
 }
 </style>
+<!-- Firebase SDKs (compat v9) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -1211,6 +1215,13 @@ body::before {
         <button class="nav-btn" data-page="library">Library</button>
         <button class="nav-btn" data-page="calculators">Calculators</button>
       </nav>
+      <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+        <div id="sync-indicator" style="display:none;align-items:center;gap:5px;font-size:0.75rem;color:var(--text-secondary)">
+          <div id="sync-dot" style="width:8px;height:8px;border-radius:50%;background:#22c55e;transition:background 0.3s" title="Synced"></div>
+          Cloud
+        </div>
+        <button id="auth-btn" class="btn btn-ghost" style="font-size:0.78rem;padding:5px 12px;white-space:nowrap" onclick="signInWithGoogle()">☁ Sign In</button>
+      </div>
     </div>
   </header>
 
@@ -1337,6 +1348,24 @@ const PRINCIPLES = [
 ];
 
 // ════════════════════════════════════════
+// FIREBASE CONFIG
+// Replace the placeholder values below with your project's config.
+// Get it from: Firebase Console → Project Settings → Your Apps → Web app
+// ════════════════════════════════════════
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+let db = null;
+let auth = null;
+let currentUser = null;
+
+// ════════════════════════════════════════
 // STATE & STORAGE
 // ════════════════════════════════════════
 const STORAGE_KEY = "iron-protocol-data";
@@ -1350,17 +1379,102 @@ function loadState() {
 
 function saveState(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  showToast();
+  if (currentUser && db) {
+    pushToCloud(data);
+    showToast('☁ Saved & synced');
+  } else {
+    showToast('💾 Saved locally');
+  }
 }
 
 let state = loadState();
 let currentWeek = state._currentWeek || 1;
 let currentPage = "overview";
 
-function showToast() {
+function showToast(msg) {
   const t = document.getElementById("save-toast");
+  t.textContent = msg || '✓ Saved';
   t.classList.add("visible");
-  setTimeout(() => t.classList.remove("visible"), 1500);
+  setTimeout(() => t.classList.remove("visible"), 1800);
+}
+
+// ════════════════════════════════════════
+// FIREBASE AUTH + FIRESTORE
+// ════════════════════════════════════════
+function initFirebase() {
+  try {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+    auth = firebase.auth();
+
+    auth.onAuthStateChanged(async (user) => {
+      currentUser = user;
+      updateAuthUI();
+      if (user) {
+        await pullFromCloud();
+        render();
+      }
+    });
+  } catch (e) {
+    console.warn('Firebase init failed — running in local-only mode.', e);
+  }
+}
+
+async function pullFromCloud() {
+  if (!db || !currentUser) return;
+  try {
+    const doc = await db.collection('users').doc(currentUser.uid).get();
+    if (doc.exists) {
+      const cloudData = doc.data();
+      state = { ...state, ...cloudData };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      currentWeek = state._currentWeek || 1;
+    }
+  } catch (e) {
+    console.warn('Cloud pull failed:', e);
+  }
+}
+
+async function pushToCloud(data) {
+  if (!db || !currentUser) return;
+  try {
+    await db.collection('users').doc(currentUser.uid).set(data, { merge: true });
+    updateSyncDot(true);
+  } catch (e) {
+    console.warn('Cloud push failed:', e);
+    updateSyncDot(false);
+  }
+}
+
+function signInWithGoogle() {
+  if (!auth) { alert('Firebase not configured yet. See FIREBASE_CONFIG in the source.'); return; }
+  auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+}
+
+function signOutUser() {
+  if (!auth) return;
+  auth.signOut();
+}
+
+function updateAuthUI() {
+  const btn = document.getElementById('auth-btn');
+  const indicator = document.getElementById('sync-indicator');
+  if (!btn) return;
+  if (currentUser) {
+    const name = currentUser.displayName ? currentUser.displayName.split(' ')[0] : currentUser.email;
+    btn.textContent = `Sign Out (${name})`;
+    btn.onclick = signOutUser;
+    if (indicator) indicator.style.display = 'flex';
+  } else {
+    btn.textContent = '☁ Sign In';
+    btn.onclick = signInWithGoogle;
+    if (indicator) indicator.style.display = 'none';
+  }
+}
+
+function updateSyncDot(ok) {
+  const dot = document.getElementById('sync-dot');
+  if (dot) dot.style.background = ok ? '#22c55e' : '#ef4444';
 }
 
 function getLogKey(workout, weekNum, exerciseIdx, field) {
@@ -1431,13 +1545,13 @@ function renderOverview() {
           <div class="card-title">💾 Data Management</div>
         </div>
         <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:1rem;">
-          All your data is stored locally in your browser. Export regularly for backup.
+          ${currentUser ? `☁ Signed in as <strong>${currentUser.displayName || currentUser.email}</strong> — data syncs to the cloud automatically.` : '⚠ Not signed in — data is stored in this browser only. Sign in to sync across devices.'}
         </p>
         <div class="data-actions">
           <button class="btn btn-accent" onclick="exportData()">Export JSON Backup</button>
           <button class="btn btn-ghost" onclick="document.getElementById('import-input').click()">Import Backup</button>
           <input type="file" id="import-input" accept=".json" style="display:none" onchange="importData(event)">
-          <button class="btn btn-ghost" onclick="if(confirm('Clear ALL data? This cannot be undone.')){localStorage.removeItem('${STORAGE_KEY}');state={};currentWeek=1;render();}">Reset All Data</button>
+          <button class="btn btn-ghost" onclick="if(confirm('Clear ALL data? This cannot be undone.')){localStorage.removeItem('${STORAGE_KEY}');if(currentUser&&db)db.collection('users').doc(currentUser.uid).delete();state={};currentWeek=1;render();}">Reset All Data</button>
         </div>
       </div>
     </div>
@@ -2294,6 +2408,7 @@ function renderCalculators() {
 // ── Init ──
 render();
 attachListeners();
+initFirebase();
 
 // Auto-show/hide hip field based on sex
 document.addEventListener('change', function(e) {
