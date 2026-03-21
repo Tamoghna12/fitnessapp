@@ -29,27 +29,41 @@ export function renderToday() {
   const greeting = getGreeting();
   const name = state.profile.displayName || '';
 
+  // Build week-strip: one dot per program day, by day-of-week order
+  const sortedDays = [...program.days].sort((a, b) => a.dayOfWeek - b.dayOfWeek);
+  const { start: weekStart, end: weekEnd } = currentISOWeekBounds();
+  const logsThisWeekByTemplate = {};
+  getLogsThisWeek().forEach(l => { logsThisWeekByTemplate[l.workoutTemplateId] = true; });
+  const weekStripHtml = sortedDays.map(d => {
+    const done = logsThisWeekByTemplate[d.id];
+    const isToday = d.dayOfWeek === todayDow;
+    const cls = done ? 'done' : isToday ? 'today' : '';
+    return `<div class="week-dot ${cls}" title="${DAY_NAMES[d.dayOfWeek]} · ${d.name}"></div>`;
+  }).join('');
+
   return `
     <div class="page active">
-      <div style="margin-bottom:0.5rem;color:var(--text-secondary);font-size:0.9rem">
+      <div style="margin-bottom:0.25rem;color:var(--text-secondary);font-size:0.82rem;font-weight:500">
         ${greeting}${name ? `, ${name}` : ''}
       </div>
-      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.5rem">
-        <div style="display:flex;align-items:baseline;gap:16px">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1rem">
+        <div style="display:flex;align-items:baseline;gap:14px">
           <div class="page-title" style="margin:0">Week ${weekNum}</div>
-          <div style="color:var(--text-secondary);font-size:0.9rem">${doneCount} of ${totalDays} days done</div>
+          <div style="color:var(--text-secondary);font-size:0.85rem">${doneCount}/${totalDays} done</div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
-          <span style="font-size:0.78rem;color:var(--text-muted)">${program.name}</span>
-          <button class="btn btn-ghost" style="font-size:0.72rem;padding:4px 10px" onclick="navigateTo('build')">Change</button>
+          <span style="font-size:0.72rem;color:var(--text-muted)">${program.name}</span>
+          <button class="btn btn-ghost" style="font-size:0.68rem;padding:3px 9px" onclick="navigateTo('build')">Change</button>
         </div>
       </div>
+
+      <div class="week-strip">${weekStripHtml}</div>
 
       ${isRestDay ? renderRestDay(nextDay) : renderWorkoutCard(todayTemplate, suggestion, weekNum)}
 
       ${nextDay && !isRestDay ? `
-        <div style="color:var(--text-muted);font-size:0.82rem;margin-top:1rem;text-align:center">
-          ${doneCount < totalDays - 1 ? `Rest tomorrow · ` : ''}Next: ${nextDay.name} ${DAY_NAMES[nextDay.dayOfWeek]}
+        <div style="color:var(--text-muted);font-size:0.78rem;margin-top:0.75rem;text-align:center;font-family:'JetBrains Mono',monospace;letter-spacing:0.5px">
+          ${doneCount < totalDays - 1 ? `rest tomorrow · ` : ''}next: ${nextDay.name} ${DAY_NAMES[nextDay.dayOfWeek]}
         </div>
       ` : ''}
     </div>
@@ -58,20 +72,19 @@ export function renderToday() {
 
 function renderWorkoutCard(template, suggestion, weekNum) {
   return `
-    <div class="card" style="cursor:pointer;border-color:var(--accent)" onclick="startWorkout('${template.id}')">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
+    <div class="card card--glow" style="cursor:pointer" onclick="startWorkout('${template.id}')">
+      <div class="card-header">
         <div>
-          <div style="font-size:1.2rem;font-weight:700">${template.name}</div>
-          <div style="color:var(--text-secondary);font-size:0.85rem">${template.slots.length} exercises · Week ${weekNum}</div>
+          <div class="card-title">${template.name}</div>
+          <div style="color:var(--text-secondary);font-size:0.78rem;font-family:'JetBrains Mono',monospace;letter-spacing:0.5px;margin-top:2px">
+            ${template.slots.length} exercises · week ${weekNum}
+          </div>
         </div>
+        <span class="card-badge badge-strength">Today</span>
       </div>
-      ${suggestion ? `
-        <div style="background:var(--bg-elevated);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:14px;font-size:0.85rem;color:var(--accent-secondary)">
-          💡 ${suggestion}
-        </div>
-      ` : ''}
-      <button class="btn btn-accent" style="width:100%;font-size:1rem;padding:14px" onclick="event.stopPropagation();startWorkout('${template.id}')">
-        Start Workout
+      ${suggestion ? `<div class="ex-hint" style="display:block;margin-bottom:14px">↑ ${suggestion}</div>` : ''}
+      <button class="btn btn-accent" style="width:100%;font-size:0.95rem;padding:13px;letter-spacing:1px" onclick="event.stopPropagation();startWorkout('${template.id}')">
+        START WORKOUT
       </button>
     </div>
   `;
@@ -80,12 +93,16 @@ function renderWorkoutCard(template, suggestion, weekNum) {
 function renderRestDay(nextDay) {
   const streak = computeStreak();
   return `
-    <div class="card" style="text-align:center;padding:2rem">
-      <div style="font-size:3rem;margin-bottom:12px">🧘</div>
-      <div style="font-size:1.1rem;font-weight:600;margin-bottom:8px">Rest Day</div>
-      ${streak > 1 ? `<div style="color:var(--accent-amber);font-size:0.9rem">🔥 ${streak} week streak</div>` : ''}
-      <div style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px">
-        ${nextDay ? `Next up: ${nextDay.name} on ${DAY_NAMES[nextDay.dayOfWeek]}` : 'Great work this week!'}
+    <div class="card card--success" style="text-align:center;padding:2rem 1.5rem">
+      <div style="font-size:2.8rem;margin-bottom:10px">🧘</div>
+      <div class="card-title" style="justify-content:center;margin-bottom:6px">REST DAY</div>
+      ${streak > 1 ? `
+        <div style="display:inline-flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--accent-amber);background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.15);padding:4px 12px;border-radius:20px;margin-bottom:10px">
+          🔥 ${streak}-week streak
+        </div>
+      ` : ''}
+      <div style="color:var(--text-secondary);font-size:0.82rem;margin-top:6px">
+        ${nextDay ? `next up: ${nextDay.name} on ${DAY_NAMES[nextDay.dayOfWeek]}` : 'great work this week!'}
       </div>
     </div>
   `;

@@ -59,80 +59,75 @@ function renderActiveWorkout() {
   return `
     <div class="page active">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-        <div style="font-weight:600">${template.name} — Week ${currentISOWeekNumber()}</div>
-        <button class="btn btn-accent" onclick="finishWorkout()">Finish</button>
+        <div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;line-height:1">${template.name}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--text-muted);letter-spacing:1px">WEEK ${currentISOWeekNumber()}</div>
+        </div>
+        <button class="btn btn-accent" style="letter-spacing:1px" onclick="finishWorkout()">Finish</button>
       </div>
 
-      <div style="margin-bottom:1.5rem">
-        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px">${currentSlotIdx + 1} / ${total}</div>
-        <div style="background:var(--bg-elevated);border-radius:4px;height:6px">
-          <div style="background:var(--accent);height:6px;border-radius:4px;width:${pct}%;transition:width .3s"></div>
+      <div style="margin-bottom:1.25rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text-muted);letter-spacing:1px">${currentSlotIdx + 1} / ${total}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text-muted)">${pct}%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:${pct}%"></div>
         </div>
       </div>
 
-      <div class="card">
-        <div style="font-size:1.3rem;font-weight:700;margin-bottom:4px">${exName}</div>
-        <div style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem">
-          Target: ${targetSets}×${slot.targetRepsMin}–${slot.targetRepsMax}
-          ${loadHint ? `· ${loadHint}` : ''}
+      <div class="card card--glow">
+        <div class="ex-header">
+          <div class="ex-name">${exName}</div>
+          <div class="ex-target">${targetSets} × ${slot.targetRepsMin}–${slot.targetRepsMax} reps</div>
+          ${loadHint ? `<div class="ex-hint">${loadHint}</div>` : ''}
         </div>
 
-        <table style="width:100%;border-collapse:collapse">
-          <thead>
-            <tr>
-              <th style="text-align:left;font-size:0.7rem;color:var(--text-muted);padding:4px 8px">SET</th>
-              <th style="font-size:0.7rem;color:var(--text-muted);padding:4px 8px">LAST WEEK</th>
-              <th style="font-size:0.7rem;color:var(--text-muted);padding:4px 8px">KG</th>
-              <th style="font-size:0.7rem;color:var(--text-muted);padding:4px 8px">REPS</th>
-              <th style="font-size:0.7rem;color:var(--text-muted);padding:4px 8px">✓</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${Array.from({ length: targetSets }, (_, i) => {
-              const existing = currentSets.find(s => s.setNumber === i + 1);
-              const lastSet = lastSets[i];
-              return `
-                <tr>
-                  <td style="padding:6px 8px;color:var(--text-secondary);font-size:0.85rem">${i + 1}</td>
-                  <td style="padding:6px 8px;text-align:center;font-size:0.8rem;color:var(--text-muted)">
-                    ${lastSet ? `${lastSet.weight||'—'}kg × ${lastSet.reps||'—'}` : '—'}
-                  </td>
-                  <td style="padding:4px 6px">
-                    <input class="db-log-input" type="number" placeholder="kg" step="0.5"
-                      value="${existing?.weight || ''}"
-                      onchange="logSet('${slot.id}', '${slot.exerciseId}', ${i+1}, 'weight', this.value)">
-                  </td>
-                  <td style="padding:4px 6px">
-                    <input class="db-log-input" type="number" placeholder="reps"
-                      value="${existing?.reps || ''}"
-                      onchange="logSet('${slot.id}', '${slot.exerciseId}', ${i+1}, 'reps', this.value)">
-                  </td>
-                  <td style="padding:4px 6px;text-align:center">
-                    <input type="checkbox" ${existing?.completed ? 'checked' : ''}
-                      onchange="markComplete('${slot.id}', '${slot.exerciseId}', ${i+1}, this.checked)"
-                      style="width:20px;height:20px;cursor:pointer">
-                  </td>
-                </tr>
-              `;
-            }).join('')}
-          </tbody>
-        </table>
+        <div style="display:grid;grid-template-columns:28px 1fr 1fr 1fr 44px;gap:8px;padding:0 12px 6px;font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase">
+          <span style="text-align:center">#</span>
+          <span style="text-align:center">Last</span>
+          <span style="text-align:center">kg</span>
+          <span style="text-align:center">reps</span>
+          <span style="text-align:center">✓</span>
+        </div>
 
-        <button class="btn btn-ghost" style="margin-top:8px;font-size:0.8rem"
+        <div class="set-rows">
+          ${Array.from({ length: targetSets }, (_, i) => {
+            const existing = currentSets.find(s => s.setNumber === i + 1);
+            const lastSet = lastSets[i];
+            return `
+              <div class="set-row ${existing?.completed ? 'completed' : ''}">
+                <span class="set-num">${i + 1}</span>
+                <span class="set-prev">${lastSet ? `${lastSet.weight||'—'}×${lastSet.reps||'—'}` : '—'}</span>
+                <input class="set-input" type="number" placeholder="kg" step="0.5"
+                  value="${existing?.weight || ''}"
+                  onchange="logSet('${slot.id}', '${slot.exerciseId}', ${i+1}, 'weight', this.value)">
+                <input class="set-input" type="number" placeholder="reps"
+                  value="${existing?.reps || ''}"
+                  onchange="logSet('${slot.id}', '${slot.exerciseId}', ${i+1}, 'reps', this.value)">
+                <input type="checkbox" class="set-check" ${existing?.completed ? 'checked' : ''}
+                  onchange="markComplete('${slot.id}', '${slot.exerciseId}', ${i+1}, this.checked)">
+              </div>
+            `;
+          }).join('')}
+        </div>
+
+        <button class="btn btn-ghost" style="margin-top:4px;font-size:0.78rem;width:100%"
           onclick="addSet('${slot.id}', '${slot.exerciseId}', ${targetSets + currentSets.filter(s=>s.setNumber > slot.targetSets).length + 1})">
-          + Add set
+          + add set
         </button>
       </div>
 
-      <div style="display:flex;gap:10px;margin-top:1rem;flex-wrap:wrap">
-        <button class="btn btn-ghost" onclick="swapExercise('${slot.id}', '${slot.exerciseId}')">Swap</button>
-        <button class="btn btn-ghost" onclick="skipExercise('${slot.id}', '${slot.exerciseId}', ${targetSets})">Skip</button>
-        ${currentSlotIdx > 0 ? `<button class="btn btn-ghost" onclick="prevSlot()">← Prev</button>` : ''}
-        ${currentSlotIdx < total - 1 ? `<button class="btn btn-accent" onclick="nextSlot()">Next →</button>` : ''}
+      <div style="display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap">
+        <button class="btn btn-ghost" style="font-size:0.78rem" onclick="swapExercise('${slot.id}', '${slot.exerciseId}')">⇄ Swap</button>
+        <button class="btn btn-ghost" style="font-size:0.78rem" onclick="skipExercise('${slot.id}', '${slot.exerciseId}', ${targetSets})">↷ Skip</button>
+        <div style="flex:1"></div>
+        ${currentSlotIdx > 0 ? `<button class="btn btn-ghost" style="font-size:0.78rem" onclick="prevSlot()">← Prev</button>` : ''}
+        ${currentSlotIdx < total - 1 ? `<button class="btn btn-accent" style="font-size:0.78rem;letter-spacing:0.5px" onclick="nextSlot()">Next →</button>` : ''}
       </div>
 
       <div class="card" style="margin-top:1rem">
-        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px">Session notes</div>
+        <div class="section-label" style="margin-bottom:10px">Session notes</div>
         <textarea class="notes-area" placeholder="How does it feel?"
           onchange="updateNotes(this.value)">${session.log.notes}</textarea>
       </div>
