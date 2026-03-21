@@ -11,6 +11,7 @@ import { checkOnboarding } from './onboarding.js';
 
 loadState();
 initNav();
+window.navigateTo = navigateTo;
 
 registerRoute('today', (subPage) => {
   if (subPage?.type === 'workout') return renderWorkout(subPage);
