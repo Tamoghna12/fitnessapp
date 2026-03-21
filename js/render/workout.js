@@ -45,7 +45,7 @@ function renderActiveWorkout() {
   const currentSets = log.sets.filter(s => s.exerciseSlotId === slot.id);
   const targetSets = slot.targetSets;
 
-  const exName = getExName(slot.exerciseId);
+  const exName = getExName(slot.exerciseId, slot.id);
   const loadHint = slot.targetLoadKg ? `Try ${slot.targetLoadKg}kg ↑` : '';
 
   return `
@@ -144,7 +144,12 @@ function getLastWeekSets(slotId) {
   return lastLog.sets.filter(s => s.exerciseSlotId === slotId).sort((a, b) => a.setNumber - b.setNumber);
 }
 
-function getExName(exerciseId) {
+function getExName(exerciseId, slotId) {
+  // Check for session-scoped swap override
+  if (slotId && session) {
+    const swap = [...session.swaps].reverse().find(s => s.slotId === slotId);
+    if (swap) return swap.newName;
+  }
   if (state.exercises[exerciseId]) return state.exercises[exerciseId].name;
   const builtin = BUILTIN_EXERCISES.find(e => e.id === exerciseId);
   if (builtin) return builtin.name;
@@ -217,12 +222,9 @@ window.filterSwapPicker = function(query, slotId, originalExerciseId) {
 
 window.selectSwap = function(slotId, originalExerciseId, newExerciseId, newName) {
   if (!session) return;
-  // Record the swap
-  const originalName = getExName(originalExerciseId);
+  // Record the swap — session-scoped, no mutation of live state objects
+  const originalName = getExName(originalExerciseId, slotId);
   session.swaps.push({ slotId, originalExerciseId, newExerciseId, originalName, newName });
-  // Update this slot's exerciseId for the rest of the session (session-scoped)
-  const slot = session.template.slots.find(s => s.id === slotId);
-  if (slot) slot._sessionExerciseId = newExerciseId; // temporary override
   document.getElementById('swap-overlay')?.remove();
   rerender();
 };
@@ -298,6 +300,10 @@ function commitFinish() {
 }
 
 function showSwapPrompt(onConfirm) {
+  // Capture notes before replacing innerHTML destroys the textarea
+  const notesEl = document.querySelector('.notes-area');
+  if (notesEl) session.log.notes = notesEl.value;
+
   const el = document.getElementById('main-content');
   const swapsHtml = session.swaps.map((sw, i) => `
     <label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer">

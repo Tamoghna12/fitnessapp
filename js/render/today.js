@@ -21,7 +21,7 @@ export function renderToday() {
   const upcomingDays = program.days
     .filter(d => d.dayOfWeek > todayDow)
     .sort((a, b) => a.dayOfWeek - b.dayOfWeek);
-  const nextDay = upcomingDays[0] ?? program.days[0];
+  const nextDay = upcomingDays[0] ?? [...program.days].sort((a, b) => a.dayOfWeek - b.dayOfWeek)[0];
 
   // Best suggestion for today's workout
   const suggestion = todayTemplate ? getTodaySuggestion(todayTemplate, logsThisWeek) : null;
