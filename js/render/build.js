@@ -101,6 +101,8 @@ function renderBuildHome() {
           <span style="color:var(--text-muted);font-size:0.85rem">Clone ›</span>
         </div>
       `).join('')}
+
+      ${renderCommunitySection()}
     </div>
   `;
 }
@@ -140,6 +142,79 @@ window.buildCloneTemplate = function(templateId) {
   };
   saveProgram(clone);
   _editingProgramId = clone.id;
+  _expandedDays = new Set();
+  _editingSlot = null;
+  rerender();
+};
+
+// ── Community workouts section on Build home ─────────────────────────────────
+let _communityFilter = 'all';
+
+function renderCommunitySection() {
+  const workouts = typeof COMMUNITY_WORKOUTS !== 'undefined' ? COMMUNITY_WORKOUTS : [];
+  if (workouts.length === 0) return '';
+
+  const equipTypes = [...new Set(workouts.map(w => w.equipment))];
+  const filtered = _communityFilter === 'all'
+    ? workouts
+    : workouts.filter(w => w.equipment === _communityFilter);
+
+  return `
+    <div class="section-label" style="margin:1.25rem 0 8px">Community Workouts</div>
+    <div style="font-size:0.78rem;color:var(--text-muted);margin-bottom:10px">50 quick workouts — tap to add as a program</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">
+      <button class="me-chip ${_communityFilter === 'all' ? 'active' : ''}" onclick="buildCommunityFilter('all')">All</button>
+      ${equipTypes.map(e => `
+        <button class="me-chip ${_communityFilter === e ? 'active' : ''}" onclick="buildCommunityFilter('${e}')">
+          ${e.charAt(0).toUpperCase() + e.slice(1)}
+        </button>
+      `).join('')}
+    </div>
+    ${filtered.map(w => {
+      const formatTag = w.format === 'tabata' ? 'TABATA' : w.duration + 'min';
+      return `
+        <div class="build-prog-card" onclick="buildImportCommunityAsProgram('${w.id}')">
+          <div>
+            <div class="build-prog-name">${w.name}</div>
+            <div class="build-prog-meta">${w.exercises.length} exercises · ${formatTag} · ${w.muscles}</div>
+          </div>
+          <span style="color:var(--text-muted);font-size:0.85rem">+ Add</span>
+        </div>
+      `;
+    }).join('')}
+  `;
+}
+
+window.buildCommunityFilter = function(filter) {
+  _communityFilter = filter;
+  rerender();
+};
+
+window.buildImportCommunityAsProgram = function(workoutId) {
+  const workouts = typeof COMMUNITY_WORKOUTS !== 'undefined' ? COMMUNITY_WORKOUTS : [];
+  const w = workouts.find(x => x.id === workoutId);
+  if (!w) return;
+
+  const parsed = (w.exercises || []).map(ex => parseAnabolicAliensExercise(ex, w.equipment));
+  parsed.forEach(p => saveExercise(p.exercise));
+
+  const prog = makeProgram({
+    id: `${w.id}-${Date.now()}`,
+    name: w.name,
+    totalWeeks: 8,
+    isTemplate: false,
+    days: [
+      makeWorkoutTemplate({
+        name: w.name,
+        dayOfWeek: 0,
+        slots: parsed.map(p => p.slot),
+      }),
+    ],
+  });
+
+  saveProgram(prog);
+  syncFirestore(prog);
+  _editingProgramId = prog.id;
   _expandedDays = new Set();
   _editingSlot = null;
   rerender();
