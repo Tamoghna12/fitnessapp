@@ -126,7 +126,7 @@ function renderActiveWorkout() {
       <div class="card" style="margin-top:1rem">
         <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px">Session notes</div>
         <textarea class="notes-area" placeholder="How does it feel?"
-          onchange="session.log.notes=this.value">${session.log.notes}</textarea>
+          onchange="updateNotes(this.value)">${session.log.notes}</textarea>
       </div>
     </div>
   `;
@@ -240,6 +240,10 @@ window.nextSlot = function() {
   if (!session) return;
   session.currentSlotIdx = Math.min(session.currentSlotIdx + 1, session.template.slots.length - 1);
   rerender();
+};
+
+window.updateNotes = function(val) {
+  if (session) session.log.notes = val;
 };
 
 window.prevSlot = function() {

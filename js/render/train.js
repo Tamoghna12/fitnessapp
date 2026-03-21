@@ -3,6 +3,7 @@ import { generateSuggestions } from '../engine.js';
 import { currentUser, db } from '../auth.js';
 import { pushDoc } from '../firestore.js';
 import { rerender } from '../router.js';
+import { BUILTIN_EXERCISES } from '../data.js';
 
 export function renderTrain(subPage) {
   if (subPage?.type === 'review') return renderReview();
@@ -131,7 +132,9 @@ function findSlot(program, slotId) {
 }
 
 function getExName(exerciseId) {
-  return state.exercises[exerciseId]?.name ?? exerciseId;
+  return state.exercises[exerciseId]?.name ??
+    BUILTIN_EXERCISES.find(e => e.id === exerciseId)?.name ??
+    exerciseId;
 }
 
 // Global handlers

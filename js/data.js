@@ -65,8 +65,24 @@ export const BUILTIN_PROGRAMS = [
           makeExerciseSlot({ exerciseId: 'plank', targetSets: 3, targetRepsMin: 1, targetRepsMax: 1, targetLoadKg: null, progressionRule: 'none' }),
         ],
       }),
-      makeWorkoutTemplate({ id: 'fb-b', name: 'Full Body B', dayOfWeek: 2, slots: [] }),
-      makeWorkoutTemplate({ id: 'fb-c', name: 'Full Body C', dayOfWeek: 4, slots: [] }),
+      makeWorkoutTemplate({
+        id: 'fb-b', name: 'Full Body B', dayOfWeek: 2,
+        slots: [
+          makeExerciseSlot({ exerciseId: 'db-rdl', targetSets: 3, targetRepsMin: 8, targetRepsMax: 10, targetLoadKg: 14, progressionRule: 'weight', progressionStepKg: 2.5 }),
+          makeExerciseSlot({ exerciseId: 'db-ohp', targetSets: 3, targetRepsMin: 8, targetRepsMax: 10, targetLoadKg: 10, progressionRule: 'weight', progressionStepKg: 2.5 }),
+          makeExerciseSlot({ exerciseId: 'db-lunge', targetSets: 3, targetRepsMin: 8, targetRepsMax: 10, targetLoadKg: 10, progressionRule: 'weight', progressionStepKg: 2.5 }),
+          makeExerciseSlot({ exerciseId: 'glute-bridge', targetSets: 3, targetRepsMin: 12, targetRepsMax: 15, targetLoadKg: null, progressionRule: 'reps' }),
+        ],
+      }),
+      makeWorkoutTemplate({
+        id: 'fb-c', name: 'Full Body C', dayOfWeek: 4,
+        slots: [
+          makeExerciseSlot({ exerciseId: 'db-goblet', targetSets: 3, targetRepsMin: 8, targetRepsMax: 10, targetLoadKg: 16, progressionRule: 'weight', progressionStepKg: 2.5 }),
+          makeExerciseSlot({ exerciseId: 'db-bent-row', targetSets: 3, targetRepsMin: 8, targetRepsMax: 10, targetLoadKg: 14, progressionRule: 'weight', progressionStepKg: 2.5 }),
+          makeExerciseSlot({ exerciseId: 'pushup', targetSets: 3, targetRepsMin: 8, targetRepsMax: 12, targetLoadKg: null, progressionRule: 'reps' }),
+          makeExerciseSlot({ exerciseId: 'plank', targetSets: 3, targetRepsMin: 1, targetRepsMax: 1, targetLoadKg: null, progressionRule: 'none' }),
+        ],
+      }),
     ],
   }),
 ];
