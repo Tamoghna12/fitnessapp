@@ -4,59 +4,104 @@ import { rerender } from '../router.js';
 
 export function renderMe() {
   const p = state.profile;
-  const name = currentUser?.displayName || currentUser?.email || 'Not signed in';
+  const name = currentUser?.displayName || currentUser?.email || null;
+  const initials = name
+    ? name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+    : '?';
+
+  const LEVELS = ['beginner', 'intermediate', 'advanced'];
+  const LEVEL_LABELS = { beginner: 'Beginner', intermediate: 'Intermediate', advanced: 'Advanced' };
+  const DAYS = [2, 3, 4, 5, 6];
 
   return `
-    <div class="page active">
-      <div class="page-title">Me</div>
+    <div class="page active me-page">
 
-      <div class="card" style="margin-bottom:1rem">
-        <div class="card-title" style="margin-bottom:12px">☁ Account</div>
-        ${currentUser ? `
-          <div style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:12px">Signed in as ${name}</div>
-          <button class="btn btn-ghost" onclick="firebase.auth().signOut()">Sign Out</button>
-        ` : `
-          <div style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:12px">Sign in to sync across devices</div>
-          <button class="btn btn-accent" onclick="signIn()">Sign In with Google</button>
-        `}
+      <!-- Hero / user identity -->
+      <div class="me-hero">
+        <div class="me-avatar">${currentUser ? initials : '?'}</div>
+        <div class="me-identity">
+          <div class="me-name">${name || 'Guest'}</div>
+          <div class="me-subtitle">${currentUser ? 'Synced to cloud ✓' : 'Local only — sign in to sync'}</div>
+        </div>
+        ${currentUser
+          ? `<button class="me-signout-btn" onclick="meSignOut()">Sign out</button>`
+          : `<button class="btn btn-accent" style="font-size:0.82rem;padding:7px 16px" onclick="signIn()">Sign In</button>`
+        }
       </div>
 
-      <div class="card" style="margin-bottom:1rem">
-        <div class="card-title" style="margin-bottom:12px">Profile</div>
-        <div class="metric-row">
-          <span class="metric-name">Level</span>
-          <select class="db-search" style="width:auto" onchange="updateProfile({level:this.value})">
-            ${['beginner','intermediate','advanced'].map(l => `<option value="${l}" ${p.level===l?'selected':''}>${l}</option>`).join('')}
-          </select>
-        </div>
-        <div class="metric-row" style="margin-top:8px">
-          <span class="metric-name">Days/week preference</span>
-          <select class="db-search" style="width:auto" onchange="updateProfile({daysPerWeek:+this.value})">
-            ${[2,3,4,5,6].map(n => `<option value="${n}" ${p.daysPerWeek===n?'selected':''}>${n}</option>`).join('')}
-          </select>
+      <!-- Level -->
+      <div class="me-section">
+        <div class="me-section-label">Training Level</div>
+        <div class="me-chip-row">
+          ${LEVELS.map(l => `
+            <button class="me-chip ${p.level === l ? 'active' : ''}" onclick="meUpdateProfile({level:'${l}'})">
+              ${LEVEL_LABELS[l]}
+            </button>
+          `).join('')}
         </div>
       </div>
 
-      <div class="card">
-        <div class="card-title" style="margin-bottom:12px">💾 Data</div>
-        <div class="data-actions">
-          <button class="btn btn-accent" onclick="exportData()">Export Backup</button>
-          <button class="btn btn-ghost" onclick="document.getElementById('import-input').click()">Import Backup</button>
-          <input type="file" id="import-input" accept=".json" style="display:none" onchange="importData(event)">
-          <button class="btn btn-ghost" onclick="if(confirm('Clear ALL data?')){localStorage.clear();location.reload()}">Reset All</button>
+      <!-- Days per week -->
+      <div class="me-section">
+        <div class="me-section-label">Days per week</div>
+        <div class="me-chip-row">
+          ${DAYS.map(n => `
+            <button class="me-chip me-chip-num ${p.daysPerWeek === n ? 'active' : ''}" onclick="meUpdateProfile({daysPerWeek:${n}})">
+              ${n}
+            </button>
+          `).join('')}
         </div>
       </div>
+
+      <!-- Data management -->
+      <div class="me-section">
+        <div class="me-section-label">Data</div>
+        <div class="me-data-rows">
+          <button class="me-data-row" onclick="exportData()">
+            <div class="me-data-icon">↓</div>
+            <div class="me-data-info">
+              <div class="me-data-title">Export Backup</div>
+              <div class="me-data-desc">Download a JSON copy of all your data</div>
+            </div>
+            <span class="me-data-arrow">›</span>
+          </button>
+          <button class="me-data-row" onclick="document.getElementById('import-input').click()">
+            <div class="me-data-icon">↑</div>
+            <div class="me-data-info">
+              <div class="me-data-title">Import Backup</div>
+              <div class="me-data-desc">Restore from a previously exported file</div>
+            </div>
+            <span class="me-data-arrow">›</span>
+          </button>
+          <button class="me-data-row danger" onclick="if(confirm('Clear ALL data? This cannot be undone.')){localStorage.clear();location.reload()}">
+            <div class="me-data-icon me-data-icon-danger">!</div>
+            <div class="me-data-info">
+              <div class="me-data-title">Reset All Data</div>
+              <div class="me-data-desc">Permanently delete all programs and logs</div>
+            </div>
+            <span class="me-data-arrow">›</span>
+          </button>
+        </div>
+        <input type="file" id="import-input" accept=".json" style="display:none" onchange="importData(event)">
+      </div>
+
     </div>
   `;
 }
 
-// Expose auth functions globally for inline onclick handlers
 window.signIn = signIn;
 
-window.updateProfile = function(patch) {
+window.meSignOut = function() {
+  signOut();
+};
+
+window.meUpdateProfile = function(patch) {
   updateProfile(patch);
   rerender();
 };
+
+// keep legacy alias for any other callers
+window.updateProfile = window.meUpdateProfile;
 
 window.exportData = function() {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
