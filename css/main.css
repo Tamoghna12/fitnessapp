@@ -1205,3 +1205,6 @@ body::before {
 .db-log-input { background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius-xs); padding:4px 8px; color:var(--text-primary); font-size:0.82rem; width:70px; text-align:center; }
 .db-source-link { display:inline-flex; align-items:center; gap:6px; color:var(--accent-blue); font-size:0.82rem; text-decoration:none; }
 .db-source-link:hover { text-decoration:underline; }
+
+/* ── Onboarding ── */
+.onb-btn:hover { border-color: var(--accent) !important; color: var(--accent) !important; }
