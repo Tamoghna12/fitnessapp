@@ -30,18 +30,25 @@ function renderBuildHome() {
 
       <div class="card">
         <div class="section-label" style="margin-bottom:1rem">Programs</div>
-        ${allPrograms.map(p => `
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-subtle)">
-            <div>
-              <div style="font-weight:500">${p.name} ${p.isTemplate ? '<span style="font-size:0.7rem;color:var(--text-muted)">(template)</span>' : ''}</div>
-              <div style="font-size:0.78rem;color:var(--text-muted)">${p.days.length} days · ${p.totalWeeks} weeks</div>
+        ${allPrograms.map(p => {
+          const isActive = p.id === state.profile.activeProgramId;
+          return `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border-subtle)">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;font-weight:500">
+                  ${p.name}
+                  ${isActive ? `<span style="font-size:0.65rem;background:rgba(0,229,160,.15);color:var(--accent-secondary);padding:2px 7px;border-radius:4px;font-weight:600">ACTIVE</span>` : ''}
+                  ${p.isTemplate ? `<span style="font-size:0.65rem;color:var(--text-muted)">(template)</span>` : ''}
+                </div>
+                <div style="font-size:0.78rem;color:var(--text-muted)">${p.days.length} days · ${p.totalWeeks} weeks</div>
+              </div>
+              <div style="display:flex;gap:8px;flex-shrink:0">
+                ${!isActive ? `<button class="btn btn-accent" style="font-size:0.78rem;padding:4px 12px" onclick="useProgram('${p.id}')">Use</button>` : ''}
+                <button class="btn btn-ghost" style="font-size:0.78rem;padding:4px 10px" onclick="editProgram('${p.id}')">Edit</button>
+              </div>
             </div>
-            <div style="display:flex;gap:8px">
-              <button class="btn btn-ghost" style="font-size:0.78rem;padding:4px 10px" onclick="useProgram('${p.id}')">Use</button>
-              <button class="btn btn-ghost" style="font-size:0.78rem;padding:4px 10px" onclick="editProgram('${p.id}')">Edit</button>
-            </div>
-          </div>
-        `).join('')}
+          `;
+        }).join('')}
       </div>
     </div>
   `;

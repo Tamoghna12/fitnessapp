@@ -34,9 +34,15 @@ export function renderToday() {
       <div style="margin-bottom:0.5rem;color:var(--text-secondary);font-size:0.9rem">
         ${greeting}${name ? `, ${name}` : ''}
       </div>
-      <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:1.5rem">
-        <div class="page-title" style="margin:0">Week ${weekNum}</div>
-        <div style="color:var(--text-secondary);font-size:0.9rem">${doneCount} of ${totalDays} days done</div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:1.5rem">
+        <div style="display:flex;align-items:baseline;gap:16px">
+          <div class="page-title" style="margin:0">Week ${weekNum}</div>
+          <div style="color:var(--text-secondary);font-size:0.9rem">${doneCount} of ${totalDays} days done</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+          <span style="font-size:0.78rem;color:var(--text-muted)">${program.name}</span>
+          <button class="btn btn-ghost" style="font-size:0.72rem;padding:4px 10px" onclick="navigateTo('build')">Change</button>
+        </div>
       </div>
 
       ${isRestDay ? renderRestDay(nextDay) : renderWorkoutCard(todayTemplate, suggestion, weekNum)}
