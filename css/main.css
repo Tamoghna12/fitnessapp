@@ -282,24 +282,352 @@ body::before {
 .badge-rest        { background: rgba(0,184,122,0.08);   color: var(--accent-secondary); }
 .badge-active      { background: rgba(0,184,122,0.1);    color: var(--accent-secondary); }
 
-/* ── Week dots strip (Today) ───────────────────────────────────────────────── */
-.week-strip {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 1.5rem;
+/* ── Today page layout ─────────────────────────────────────────────────────── */
+.today-page { display: flex; flex-direction: column; gap: 1.25rem; animation: fadeUp 0.3s ease both; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.week-dot {
-  flex: 1;
-  height: 5px;
-  border-radius: 3px;
-  background: var(--border);
+.today-greeting { display: flex; flex-direction: column; gap: 4px; }
+.today-greeting-text { font-size: 0.82rem; font-weight: 500; color: var(--text-secondary); }
+
+.today-date-line { display: flex; align-items: center; gap: 10px; }
+
+.today-date {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.today-week-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--accent);
+  background: var(--accent-glow);
+  padding: 3px 8px;
+  border-radius: 20px;
+  border: 1px solid rgba(37,99,235,0.15);
+}
+
+/* Day strip */
+.day-strip-wrap { display: flex; flex-direction: column; gap: 8px; }
+
+.day-strip {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.day-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 2px 6px;
+  border-radius: 10px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
   transition: var(--transition);
 }
 
+.day-chip-icon {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.day-chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.day-chip-dot--rest    { background: var(--text-muted); }
+.day-chip-dot--dim     { background: rgba(37,99,235,0.3); }
+.day-chip-dot--missed  { background: var(--border); }
+
+.day-chip-dash { font-size: 10px; color: var(--border); line-height: 1; }
+
+.day-chip-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.52rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.day-chip--done { background: rgba(0,184,122,0.08); border-color: rgba(0,184,122,0.25); }
+.day-chip--done .day-chip-icon { color: var(--accent-secondary); }
+.day-chip--done .day-chip-label { color: var(--accent-secondary); }
+
+.day-chip--today-workout {
+  background: rgba(37,99,235,0.06);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(37,99,235,0.12);
+}
+.day-chip--today-workout .day-chip-label { color: var(--accent); font-weight: 700; }
+
+.day-chip--today-rest { border-color: var(--border); box-shadow: 0 0 0 2px rgba(0,0,0,0.04); }
+.day-chip--today-rest .day-chip-label { color: var(--text-secondary); font-weight: 700; }
+
+.day-chip--upcoming { background: transparent; }
+.day-chip--missed { opacity: 0.5; }
+.day-chip--rest { background: transparent; border-color: transparent; }
+.day-chip--rest .day-chip-label { color: var(--border); }
+
+.day-strip-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--text-secondary);
+  padding: 0 2px;
+}
+
+/* ── Workout Hero Card ──────────────────────────────────────────────────────── */
+.workout-hero {
+  background: linear-gradient(135deg, var(--accent) 0%, #1d4ed8 60%, #1e40af 100%);
+  border-radius: var(--radius);
+  padding: 1.75rem 1.5rem;
+  cursor: pointer;
+  box-shadow: 0 8px 32px rgba(37,99,235,0.35), 0 2px 8px rgba(37,99,235,0.2);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.workout-hero::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -10%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  pointer-events: none;
+}
+
+.workout-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -40%;
+  left: -5%;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  pointer-events: none;
+}
+
+.workout-hero:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(37,99,235,0.45); }
+.workout-hero:active { transform: translateY(0); }
+.workout-hero-inner { position: relative; z-index: 1; }
+
+.workout-hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.workout-hero-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 4px;
+}
+
+.workout-hero-name {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.workout-hero-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.65);
+  margin-top: 4px;
+}
+
+.workout-hero-ring { position: relative; flex-shrink: 0; width: 56px; height: 56px; }
+
+.workout-hero-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: white;
+}
+
+.workout-hero-muscles { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 1rem; }
+
+.muscle-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.9);
+  text-transform: uppercase;
+}
+
+.workout-hero-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 1.25rem;
+}
+
+.workout-hero-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  background: white;
+  color: var(--accent);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.workout-hero-cta:hover { background: #f0f5ff; transform: translateY(-1px); }
+.workout-hero-cta:active { transform: translateY(0); }
+
+/* ── Rest Day Card ──────────────────────────────────────────────────────────── */
+.rest-hero {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.rest-hero-emoji { font-size: 2.8rem; margin-bottom: 10px; }
+
+.rest-hero-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  margin-bottom: 6px;
+}
+
+.rest-streak-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--accent-amber);
+  background: rgba(217,119,6,0.08);
+  border: 1px solid rgba(217,119,6,0.15);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.rest-hero-sub { color: var(--text-secondary); font-size: 0.82rem; margin-top: 4px; }
+
+/* ── Stats row ──────────────────────────────────────────────────────────────── */
+.today-stats { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.today-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-xs);
+}
+
+.today-stat-pill--fire {
+  color: var(--accent-amber);
+  border-color: rgba(217,119,6,0.2);
+  background: rgba(217,119,6,0.06);
+}
+
+.today-change-btn {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-family: 'Bricolage Grotesque', sans-serif;
+  transition: color 0.12s;
+}
+.today-change-btn:hover { color: var(--accent); }
+
+/* ── No program state ───────────────────────────────────────────────────────── */
+.no-program-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 3rem 2rem;
+  box-shadow: var(--shadow-sm);
+}
+.no-program-icon  { font-size: 3rem; margin-bottom: 16px; }
+.no-program-title { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 6px; }
+.no-program-sub   { color: var(--text-secondary); font-size: 0.85rem; }
+
+/* Legacy week strip */
+.week-strip { display: flex; gap: 6px; margin-bottom: 1.5rem; }
+.week-dot { flex: 1; height: 5px; border-radius: 3px; background: var(--border); transition: var(--transition); }
 .week-dot.done    { background: var(--accent-secondary); }
 .week-dot.today   { background: var(--accent); box-shadow: 0 2px 8px var(--accent-glow); }
-.week-dot.skipped { background: rgba(217, 119, 6, 0.35); }
+.week-dot.skipped { background: rgba(217,119,6,0.35); }
 
 /* ── Schedule grid ─────────────────────────────────────────────────────────── */
 .schedule-grid {

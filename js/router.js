@@ -36,9 +36,18 @@ export function currentSubPage() {
 
 function _render() {
   const fn = routes[currentTab];
-  if (!fn) return;
   const el = document.getElementById('main-content');
-  if (el) el.innerHTML = fn(currentSubPage());
+  if (!el) return;
+  if (!fn) {
+    el.innerHTML = `<div class="page active" style="text-align:center;padding:3rem 1rem"><div class="page-title">Page not found</div><div class="page-subtitle">Route "${currentTab}" has no renderer registered.</div></div>`;
+    return;
+  }
+  try {
+    el.innerHTML = fn(currentSubPage());
+  } catch (e) {
+    console.error('[router] render error on tab', currentTab, e);
+    el.innerHTML = `<div class="page active"><div class="card" style="color:#ef4444;padding:1.5rem"><strong>Render error:</strong> ${e.message}<br><pre style="font-size:0.7rem;margin-top:8px;overflow:auto">${e.stack}</pre></div></div>`;
+  }
 }
 
 export function rerender() { _render(); }
