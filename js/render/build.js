@@ -1,5 +1,5 @@
 import { state, saveProgram, saveExercise, updateProfile, saveState } from '../state.js';
-import { BUILTIN_PROGRAMS, BUILTIN_EXERCISES, getAllExercises, parseDarebeeExercise } from '../data.js';
+import { BUILTIN_PROGRAMS, BUILTIN_EXERCISES, getAllExercises, parseDarebeeExercise, parseAnabolicAliensExercise } from '../data.js';
 import { makeProgram, makeWorkoutTemplate, makeExerciseSlot, makeExercise } from '../schema.js';
 import { pushSubPage, rerender } from '../router.js';
 import { currentUser, db } from '../auth.js';
@@ -317,6 +317,7 @@ function renderBuilder(programId) {
                   <button class="btn btn-ghost btn-sm" onclick="buildToggleImportMenu(${dow})">Import ▾</button>
                   <div class="build-import-menu" id="import-menu-${dow}">
                     <button onclick="buildStartDarebeeImport('${programId}',${dow})">Browse Darebee</button>
+                    <button onclick="buildStartAAImport('${programId}',${dow})">Browse Anabolic Aliens</button>
                     <button onclick="buildStartPasteImport('${programId}',${dow})">Paste Text</button>
                     <button onclick="buildStartFileImport('${programId}',${dow})">Upload File</button>
                     <button onclick="buildDownloadTemplate()">Download Template</button>
@@ -369,6 +370,7 @@ function renderBuilder(programId) {
         <div class="build-sheet-tabs">
           <button class="build-sheet-tab ${_pickerTab === 'library' ? 'active' : ''}" data-tab="library" onclick="buildPickerTab('library')">Library</button>
           <button class="build-sheet-tab ${_pickerTab === 'darebee' ? 'active' : ''}" data-tab="darebee" onclick="buildPickerTab('darebee')">Darebee</button>
+          <button class="build-sheet-tab ${_pickerTab === 'aa' ? 'active' : ''}" data-tab="aa" onclick="buildPickerTab('aa')">Anabolic Aliens</button>
         </div>
         <div class="build-sheet-search">
           <input type="text" placeholder="Search exercises…" value="${_pickerSearch}"
@@ -531,6 +533,7 @@ window.buildUpdateSlot = function(programId, templateId, slotId, field, value) {
 // ── Exercise picker sheet ─────────────────────────────────────────────────────
 function renderPickerBody() {
   if (_pickerTab === 'darebee') return renderDarebeePickerBody();
+  if (_pickerTab === 'aa') return renderAAPickerBody();
 
   const all = getAllExercises(state.exercises);
   const q = _pickerSearch.toLowerCase();
@@ -592,6 +595,47 @@ function renderDarebeePickerBody() {
       </div>
     `;
   }).join('');
+}
+
+function renderAAPickerBody() {
+  const workouts = typeof ANABOLIC_ALIENS_WORKOUTS !== 'undefined' ? ANABOLIC_ALIENS_WORKOUTS : [];
+  const q = _pickerSearch.toLowerCase();
+  const filtered = q
+    ? workouts.filter(w =>
+        w.name.toLowerCase().includes(q) ||
+        w.muscles.toLowerCase().includes(q) ||
+        w.equipment.toLowerCase().includes(q)
+      )
+    : workouts;
+
+  if (filtered.length === 0) {
+    return `<div style="color:var(--text-muted);font-size:0.85rem;padding:16px 0">No workouts found.</div>`;
+  }
+
+  // Group by equipment
+  const groups = {};
+  filtered.forEach(w => {
+    const g = w.equipment.charAt(0).toUpperCase() + w.equipment.slice(1);
+    if (!groups[g]) groups[g] = [];
+    groups[g].push(w);
+  });
+
+  return Object.entries(groups).map(([group, ww]) => `
+    <div class="ex-picker-group-label">${group}</div>
+    ${ww.map(w => {
+      const formatTag = w.format === 'tabata' ? 'TABATA' : `${w.duration}min`;
+      return `
+        <div class="db-card" style="margin-bottom:6px" onclick="buildImportAAWorkout('${_darebeePickerProgId}',${_pickerDayOfWeek},'${w.id}')">
+          <div class="db-card-name">${w.name}</div>
+          <div class="db-card-meta">
+            <span class="db-type-tag">${formatTag}</span>
+            <span style="color:var(--text-secondary);font-size:0.75rem">${w.muscles}</span>
+            <span style="color:var(--text-muted);font-size:0.72rem">${w.exercises.length} exercises</span>
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `).join('');
 }
 
 window.buildOpenPicker = function(programId, dow) {
@@ -710,6 +754,48 @@ window.buildImportDarebeeWorkout = function(programId, dow, idx) {
     prog.days.push(template);
   }
   const parsed = (w.exercises || []).map(ex => parseDarebeeExercise(ex));
+  parsed.forEach(p => {
+    saveExercise(p.exercise);
+    template.slots.push(p.slot);
+  });
+  saveProgram(prog);
+  syncFirestore(prog);
+  buildCloseSheet();
+  rerender();
+};
+
+// ── Anabolic Aliens import ────────────────────────────────────────────────────
+window.buildStartAAImport = function(programId, dow) {
+  document.querySelectorAll('.build-import-menu').forEach(m => m.classList.remove('open'));
+  _darebeePickerProgId = programId;
+  _pickerDayOfWeek = +dow;
+  _pickerTab = 'aa';
+  _pickerSearch = '';
+  _pickerSelected = new Set();
+  document.getElementById('build-sheet')?.classList.add('open');
+  document.getElementById('build-sheet-backdrop')?.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.querySelectorAll('.build-sheet-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === 'aa');
+  });
+  const body = document.getElementById('build-sheet-body');
+  if (body) body.innerHTML = renderAAPickerBody();
+  const title = document.getElementById('build-sheet-title');
+  if (title) title.textContent = 'Browse Anabolic Aliens';
+};
+
+window.buildImportAAWorkout = function(programId, dow, workoutId) {
+  const workouts = typeof ANABOLIC_ALIENS_WORKOUTS !== 'undefined' ? ANABOLIC_ALIENS_WORKOUTS : [];
+  const w = workouts.find(x => x.id === workoutId);
+  if (!w) return;
+  const prog = getProgram(programId);
+  const targetDow = dow !== null ? +dow : 0;
+  let template = prog.days.find(d => d.dayOfWeek === targetDow);
+  if (!template) {
+    template = makeWorkoutTemplate({ name: w.name, dayOfWeek: targetDow });
+    prog.days.push(template);
+  }
+  const parsed = (w.exercises || []).map(ex => parseAnabolicAliensExercise(ex, w.equipment));
   parsed.forEach(p => {
     saveExercise(p.exercise);
     template.slots.push(p.slot);

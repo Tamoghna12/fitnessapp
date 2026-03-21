@@ -129,6 +129,69 @@ export function parseDarebeeExercise(dbEx) {
   return { exercise, slot };
 }
 
+// ── Anabolic Aliens parser ──────────────────────────────────────────────────
+export function parseAnabolicAliensExercise(aaEx, workoutEquipment) {
+  const exercise = makeExercise({
+    id: `aa-${aaEx.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`,
+    name: aaEx.name,
+    muscleGroup: aaEx.muscles || '',
+    equipment: workoutEquipment || 'bodyweight',
+    instructions: aaEx.duration ? `Timed: ${aaEx.duration}` : '',
+    source: 'anabolic-aliens',
+  });
+
+  // Timed exercises: 1 rep = 1 timed interval
+  const slot = makeExerciseSlot({
+    exerciseId: exercise.id,
+    targetSets: 1,
+    targetRepsMin: 1,
+    targetRepsMax: 1,
+    targetLoadKg: null,
+    progressionRule: 'none',
+  });
+
+  return { exercise, slot };
+}
+
+/**
+ * Returns all Anabolic Aliens workouts as importable program templates.
+ * Each workout becomes a single-day program with its exercises as slots.
+ */
+export function getAnabolicAliensPrograms() {
+  const raw = typeof ANABOLIC_ALIENS_WORKOUTS !== 'undefined' ? ANABOLIC_ALIENS_WORKOUTS : [];
+  return raw.map(w => {
+    const slots = w.exercises.map(ex => {
+      const { exercise, slot } = parseAnabolicAliensExercise(ex, w.equipment);
+      // Store the exercise globally so the picker can find it
+      slot.exerciseId = exercise.id;
+      slot._exercise = exercise; // transient, used during import
+      return slot;
+    });
+
+    return {
+      ...w,
+      _program: makeProgram({
+        id: w.id,
+        name: `AA: ${w.name}`,
+        totalWeeks: 8,
+        isTemplate: true,
+        days: [
+          makeWorkoutTemplate({
+            id: `${w.id}-day`,
+            name: w.name,
+            dayOfWeek: 0,
+            slots: slots.map(s => {
+              const { _exercise, ...cleanSlot } = s;
+              return cleanSlot;
+            }),
+          }),
+        ],
+      }),
+      _exercises: slots.map(s => s._exercise),
+    };
+  });
+}
+
 export function recommendProgram(profile) {
   const { goals = [], level, equipment = [] } = profile;
 
@@ -161,10 +224,14 @@ export function getAllExercises(customExercises = {}) {
       source: ex.source || 'library',
     }));
 
-  // Deduplicate by name (builtin takes precedence, then library, then darebee, then custom)
+  // Anabolic Aliens exercises
+  const aaExercises = (typeof ANABOLIC_ALIENS_WORKOUTS !== 'undefined' ? ANABOLIC_ALIENS_WORKOUTS : [])
+    .flatMap(w => (w.exercises || []).map(ex => parseAnabolicAliensExercise(ex, w.equipment).exercise));
+
+  // Deduplicate by name (builtin takes precedence, then library, then AA, then darebee, then custom)
   const seen = new Set();
   const out = [];
-  for (const ex of [...BUILTIN_EXERCISES, ...libraryExercises, ...darebeeExercises, ...Object.values(customExercises)]) {
+  for (const ex of [...BUILTIN_EXERCISES, ...libraryExercises, ...aaExercises, ...darebeeExercises, ...Object.values(customExercises)]) {
     const key = ex.name.toLowerCase();
     if (!seen.has(key)) { seen.add(key); out.push(ex); }
   }
