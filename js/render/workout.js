@@ -26,7 +26,6 @@ export function renderWorkout(subPage) {
   if (!subPage || subPage.type !== 'workout') return '';
   if (!session || session.template.id !== subPage.templateId) {
     startSession(subPage.templateId);
-    return '<div class="page active"><div style="text-align:center;padding:2rem">Loading...</div></div>';
   }
   return renderActiveWorkout();
 }
@@ -147,7 +146,7 @@ function getLastWeekSets(slotId) {
 
 function getExName(exerciseId) {
   if (state.exercises[exerciseId]) return state.exercises[exerciseId].name;
-  const builtin = (typeof BUILTIN_EXERCISES !== 'undefined' ? BUILTIN_EXERCISES : []).find(e => e.id === exerciseId);
+  const builtin = BUILTIN_EXERCISES.find(e => e.id === exerciseId);
   if (builtin) return builtin.name;
   return exerciseId;
 }
