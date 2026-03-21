@@ -9,8 +9,16 @@ import { BUILTIN_EXERCISES, getAllExercises } from '../data.js';
 let session = null;
 
 export function startSession(templateId) {
-  const program = getActiveProgram();
-  const template = program?.days.find(d => d.id === templateId);
+  let program = getActiveProgram();
+  let template = program?.days.find(d => d.id === templateId);
+
+  // Fall back to searching all saved programs (e.g. generated one-off workouts)
+  if (!template) {
+    for (const prog of Object.values(state.programs)) {
+      template = prog.days.find(d => d.id === templateId);
+      if (template) { program = prog; break; }
+    }
+  }
   if (!template) return;
 
   session = {

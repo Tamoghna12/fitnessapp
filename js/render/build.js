@@ -4,11 +4,13 @@ import { makeProgram, makeWorkoutTemplate, makeExerciseSlot, makeExercise } from
 import { pushSubPage, popSubPage, currentSubPage, rerender } from '../router.js';
 import { currentUser, db } from '../auth.js';
 import { pushDoc } from '../firestore.js';
+import { renderGenerator } from './generator.js';
 
 export function renderBuild(subPage) {
   if (subPage?.type === 'program-editor') return renderProgramEditor(subPage.programId);
   if (subPage?.type === 'workout-editor') return renderWorkoutEditor(subPage.programId, subPage.templateId);
   if (subPage?.type === 'darebee-browser') return renderDarebeeBrowser();
+  if (subPage?.type === 'generator') return renderGenerator();
   return renderBuildHome();
 }
 
@@ -21,7 +23,8 @@ function renderBuildHome() {
       <div class="page-title">Build</div>
 
       <div style="display:flex;gap:10px;margin-bottom:1.5rem;flex-wrap:wrap">
-        <button class="btn btn-accent" onclick="newProgram()">+ New Program</button>
+        <button class="btn btn-accent" onclick="pushSubPage({type:'generator'})">⚡ Generate Workout</button>
+        <button class="btn btn-ghost" onclick="newProgram()">+ New Program</button>
         <button class="btn btn-ghost" onclick="pushSubPage({type:'darebee-browser'})">Browse Darebee</button>
       </div>
 
