@@ -150,9 +150,23 @@ export function getAllExercises(customExercises = {}) {
   const darebeeExercises = (typeof DAREBEE_WORKOUTS !== 'undefined' ? DAREBEE_WORKOUTS : [])
     .flatMap(w => (w.exercises || []).map(ex => parseDarebeeExercise(ex).exercise));
 
-  return [
-    ...BUILTIN_EXERCISES,
-    ...Object.values(customExercises),
-    ...darebeeExercises,
-  ];
+  // exercise-library.js (free-exercise-db + wger), loaded as global before app.js
+  const libraryExercises = (typeof EXERCISE_LIBRARY !== 'undefined' ? EXERCISE_LIBRARY : [])
+    .map(ex => makeExercise({
+      id: ex.id,
+      name: ex.name,
+      muscleGroup: ex.muscleGroup || '',
+      equipment: ex.equipment || 'bodyweight',
+      instructions: ex.instructions || '',
+      source: ex.source || 'library',
+    }));
+
+  // Deduplicate by name (builtin takes precedence, then library, then darebee, then custom)
+  const seen = new Set();
+  const out = [];
+  for (const ex of [...BUILTIN_EXERCISES, ...libraryExercises, ...darebeeExercises, ...Object.values(customExercises)]) {
+    const key = ex.name.toLowerCase();
+    if (!seen.has(key)) { seen.add(key); out.push(ex); }
+  }
+  return out;
 }

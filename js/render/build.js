@@ -245,22 +245,32 @@ window.filterDarebee = function(query) {
   `).join('');
 };
 
-window.filterExPicker = function(query, programId, templateId) {
-  const all = getAllExercises(state.exercises);
-  const filtered = query
-    ? all.filter(ex => ex.name.toLowerCase().includes(query.toLowerCase()))
-    : all.slice(0, 50);
-  const list = document.getElementById('ex-picker-list');
-  if (!list) return;
-  list.innerHTML = filtered.slice(0, 50).map(ex => `
+function exPickerRow(ex, programId, templateId) {
+  return `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-subtle);cursor:pointer"
       onclick="addExerciseToSlot('${programId}','${templateId}','${ex.id}')">
       <div>
         <div style="font-weight:500;font-size:0.9rem">${ex.name}</div>
-        <div style="font-size:0.75rem;color:var(--text-muted)">${ex.muscleGroup} · ${ex.source}</div>
+        <div style="font-size:0.75rem;color:var(--text-muted)">${ex.muscleGroup}${ex.equipment ? ' · ' + ex.equipment : ''}</div>
       </div>
+      <span style="font-size:0.7rem;color:var(--text-muted);white-space:nowrap;margin-left:8px">${ex.source}</span>
     </div>
-  `).join('');
+  `;
+}
+
+window.filterExPicker = function(query, programId, templateId) {
+  const all = getAllExercises(state.exercises);
+  const q = query.toLowerCase();
+  const filtered = q
+    ? all.filter(ex =>
+        ex.name.toLowerCase().includes(q) ||
+        ex.muscleGroup.toLowerCase().includes(q) ||
+        (ex.equipment || '').toLowerCase().includes(q)
+      )
+    : all.slice(0, 50);
+  const list = document.getElementById('ex-picker-list');
+  if (!list) return;
+  list.innerHTML = filtered.slice(0, 50).map(ex => exPickerRow(ex, programId, templateId)).join('');
 };
 
 window.openExercisePicker = function(programId, templateId) {
@@ -270,17 +280,12 @@ window.openExercisePicker = function(programId, templateId) {
     <div class="page active">
       <div class="db-detail-back" onclick="rerender()">← Back</div>
       <div class="page-title">Add Exercise</div>
-      <input class="db-search" type="text" placeholder="Search..." oninput="filterExPicker(this.value,'${programId}','${templateId}')" style="margin-bottom:1rem;width:100%">
+      <input class="db-search" type="text" placeholder="Search by name, muscle, or equipment…"
+        oninput="filterExPicker(this.value,'${programId}','${templateId}')"
+        style="margin-bottom:0.5rem;width:100%">
+      <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem">${all.length.toLocaleString()} exercises available</div>
       <div id="ex-picker-list">
-        ${all.slice(0, 50).map(ex => `
-          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border-subtle);cursor:pointer"
-            onclick="addExerciseToSlot('${programId}','${templateId}','${ex.id}')">
-            <div>
-              <div style="font-weight:500;font-size:0.9rem">${ex.name}</div>
-              <div style="font-size:0.75rem;color:var(--text-muted)">${ex.muscleGroup} · ${ex.source}</div>
-            </div>
-          </div>
-        `).join('')}
+        ${all.slice(0, 50).map(ex => exPickerRow(ex, programId, templateId)).join('')}
       </div>
     </div>
   `;
