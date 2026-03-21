@@ -58,12 +58,12 @@ function renderActiveWorkout() {
 
   return `
     <div class="page active">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div class="workout-header">
         <div>
-          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:-0.5px;line-height:1">${template.name}</div>
-          <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--text-muted);letter-spacing:1px">WEEK ${currentISOWeekNumber()}</div>
+          <div class="workout-title">${template.name}</div>
+          <div class="workout-week-label">WEEK ${currentISOWeekNumber()}</div>
         </div>
-        <button class="btn btn-accent" style="letter-spacing:1px" onclick="finishWorkout()">Finish</button>
+        <button class="btn btn-accent btn-sm" onclick="finishWorkout()">Finish</button>
       </div>
 
       <div style="margin-bottom:1.25rem">
@@ -99,10 +99,10 @@ function renderActiveWorkout() {
               <div class="set-row ${existing?.completed ? 'completed' : ''}">
                 <span class="set-num">${i + 1}</span>
                 <span class="set-prev">${lastSet ? `${lastSet.weight||'—'}×${lastSet.reps||'—'}` : '—'}</span>
-                <input class="set-input" type="number" placeholder="kg" step="0.5"
+                <input class="set-input" type="number" placeholder="kg" step="0.5" min="0"
                   value="${existing?.weight || ''}"
                   onchange="logSet('${slot.id}', '${slot.exerciseId}', ${i+1}, 'weight', this.value)">
-                <input class="set-input" type="number" placeholder="reps"
+                <input class="set-input" type="number" placeholder="reps" min="0"
                   value="${existing?.reps || ''}"
                   onchange="logSet('${slot.id}', '${slot.exerciseId}', ${i+1}, 'reps', this.value)">
                 <input type="checkbox" class="set-check" ${existing?.completed ? 'checked' : ''}
@@ -112,18 +112,18 @@ function renderActiveWorkout() {
           }).join('')}
         </div>
 
-        <button class="btn btn-ghost" style="margin-top:4px;font-size:0.78rem;width:100%"
+        <button class="btn btn-ghost btn-sm btn-full" style="margin-top:4px"
           onclick="addSet('${slot.id}', '${slot.exerciseId}', ${targetSets + currentSets.filter(s=>s.setNumber > slot.targetSets).length + 1})">
           + add set
         </button>
       </div>
 
       <div style="display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap">
-        <button class="btn btn-ghost" style="font-size:0.78rem" onclick="swapExercise('${slot.id}', '${slot.exerciseId}')">⇄ Swap</button>
-        <button class="btn btn-ghost" style="font-size:0.78rem" onclick="skipExercise('${slot.id}', '${slot.exerciseId}', ${targetSets})">↷ Skip</button>
+        <button class="btn btn-ghost btn-sm" onclick="swapExercise('${slot.id}', '${slot.exerciseId}')">⇄ Swap</button>
+        <button class="btn btn-ghost btn-sm" onclick="skipExercise('${slot.id}', '${slot.exerciseId}', ${targetSets})">↷ Skip</button>
         <div style="flex:1"></div>
-        ${currentSlotIdx > 0 ? `<button class="btn btn-ghost" style="font-size:0.78rem" onclick="prevSlot()">← Prev</button>` : ''}
-        ${currentSlotIdx < total - 1 ? `<button class="btn btn-accent" style="font-size:0.78rem;letter-spacing:0.5px" onclick="nextSlot()">Next →</button>` : ''}
+        ${currentSlotIdx > 0 ? `<button class="btn btn-ghost btn-sm" onclick="prevSlot()">← Prev</button>` : ''}
+        ${currentSlotIdx < total - 1 ? `<button class="btn btn-accent btn-sm" onclick="nextSlot()">Next →</button>` : ''}
       </div>
 
       <div class="card" style="margin-top:1rem">
@@ -189,7 +189,7 @@ window.swapExercise = function(slotId, originalExerciseId) {
   const el = document.getElementById('main-content');
   const all = getAllExercises(state.exercises);
   el.insertAdjacentHTML('beforeend', `
-    <div id="swap-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;overflow-y:auto;padding:1rem">
+    <div id="swap-overlay" role="dialog" aria-modal="true" aria-label="Swap exercise" style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;overflow-y:auto;padding:1rem">
       <div style="background:var(--bg-card);border-radius:var(--radius);padding:1.5rem;max-width:500px;margin:2rem auto">
         <div style="font-weight:600;margin-bottom:1rem">Swap exercise</div>
         <input class="db-search" type="text" placeholder="Search..." style="width:100%;margin-bottom:1rem"
@@ -292,19 +292,59 @@ window.finishWorkout = function() {
 function commitFinish() {
   session.log.completedAt = new Date().toISOString();
 
-  // Rating prompt (simple)
-  const rating = prompt('Rate this session 1–5 (or skip):');
-  if (rating) session.log.sessionRating = Math.min(5, Math.max(1, parseInt(rating))) || null;
+  // Show inline star rating picker instead of browser prompt
+  showRatingPicker();
+}
+
+function showRatingPicker() {
+  const el = document.getElementById('main-content');
+  const notesEl = document.querySelector('.notes-area');
+  if (notesEl) session.log.notes = notesEl.value;
+
+  el.innerHTML = `
+    <div class="page active" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:12px">💪</div>
+      <div class="page-title" style="margin-bottom:4px">Workout Complete!</div>
+      <div style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:2rem">How was your session?</div>
+      <div class="star-picker" id="star-picker">
+        ${[1,2,3,4,5].map(n => `
+          <button class="star-btn" data-rating="${n}" onclick="selectRating(${n})"
+            aria-label="Rate ${n} out of 5">★</button>
+        `).join('')}
+      </div>
+      <div id="rating-label" style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--text-muted);margin-top:8px;min-height:1.2em"></div>
+      <div style="display:flex;gap:10px;margin-top:2rem">
+        <button class="btn btn-accent" onclick="confirmRating()">Save</button>
+        <button class="btn btn-ghost" onclick="confirmRating()">Skip</button>
+      </div>
+    </div>
+  `;
+}
+
+const RATING_LABELS = ['', 'Rough', 'Tough', 'Solid', 'Great', 'Peak'];
+let _pendingRating = null;
+
+window.selectRating = function(n) {
+  _pendingRating = n;
+  document.querySelectorAll('.star-btn').forEach(btn => {
+    const val = parseInt(btn.dataset.rating);
+    btn.classList.toggle('active', val <= n);
+  });
+  const label = document.getElementById('rating-label');
+  if (label) label.textContent = RATING_LABELS[n] || '';
+};
+
+window.confirmRating = function() {
+  if (_pendingRating) session.log.sessionRating = _pendingRating;
+  _pendingRating = null;
 
   saveLog(session.log);
-
-  // Push to Firestore
   if (currentUser && db) pushDoc(db, currentUser.uid, 'logs', session.log);
 
   session = null;
   popSubPage();
   showToast('✓ Workout saved!');
-}
+};
 
 function showSwapPrompt(onConfirm) {
   // Capture notes before replacing innerHTML destroys the textarea

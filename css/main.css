@@ -391,6 +391,49 @@ body::before {
   border: 1px solid rgba(0,184,122,0.18);
 }
 
+/* Workout header */
+.workout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.workout-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.workout-week-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* Star rating picker */
+.star-picker {
+  display: flex;
+  gap: 8px;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 2.2rem;
+  color: var(--border);
+  cursor: pointer;
+  transition: color 0.12s ease, transform 0.12s ease;
+  padding: 4px;
+  line-height: 1;
+}
+
+.star-btn:hover { color: var(--accent-amber); transform: scale(1.15); }
+.star-btn.active { color: var(--accent-amber); }
+
 /* Set rows */
 .set-rows { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
 
@@ -486,6 +529,7 @@ body::before {
 }
 
 .set-check:hover:not(:checked) { border-color: var(--accent-secondary); }
+.set-check:focus { outline: none; box-shadow: 0 0 0 3px var(--accent-secondary-glow); }
 
 /* ── Routine list ──────────────────────────────────────────────────────────── */
 .routine-list {
@@ -817,6 +861,9 @@ body::before {
   color: var(--text-primary);
   border-color: var(--border);
 }
+
+.btn-sm { font-size: 0.78rem; padding: 6px 14px; letter-spacing: 0.5px; }
+.btn-full { width: 100%; }
 
 .btn-success {
   background: var(--accent-secondary);
@@ -1511,8 +1558,8 @@ body::before {
   .progress-grid { grid-template-columns: 1fr; }
   .week-selector { flex-wrap: wrap; }
 
-  .set-row { grid-template-columns: 24px 1fr 1fr 44px; }
-  .set-prev { display: none; }
+  .set-row { grid-template-columns: 24px 50px 1fr 1fr 44px; }
+  .set-prev { font-size: 0.58rem; }
 
   .log-input, .db-log-input { width: 56px; }
 }
@@ -1579,10 +1626,12 @@ body::before {
   transition: fill 0.12s ease, stroke 0.12s ease, stroke-width 0.12s ease;
 }
 
-.bm-muscle:hover {
+.bm-muscle:hover,
+.bm-muscle:focus {
   fill: rgba(37, 99, 235, 0.22);
   stroke: rgba(37, 99, 235, 0.55);
   stroke-width: 1.5;
+  outline: none;
 }
 
 .bm-muscle.selected {

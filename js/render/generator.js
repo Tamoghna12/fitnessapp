@@ -98,56 +98,56 @@ function bodyMapFront() {
 
     <!-- ── Muscle regions ── -->
     <!-- Chest left -->
-    <path class="${muscleClass('chest')}" onclick="genToggleMuscle('chest')"
+    <path class="${muscleClass('chest')}" onclick="genToggleMuscle('chest')" tabindex="0" role="button" aria-label="Chest" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('chest')}"
       d="M62,76 C74,68 90,70 100,74 L100,128 C88,140 64,136 58,122 Z"/>
     <!-- Chest right -->
-    <path class="${muscleClass('chest')}" onclick="genToggleMuscle('chest')"
+    <path class="${muscleClass('chest')}" onclick="genToggleMuscle('chest')" tabindex="0" role="button" aria-label="Chest" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('chest')}"
       d="M138,76 C126,68 110,70 100,74 L100,128 C112,140 136,136 142,122 Z"/>
 
     <!-- Abs -->
-    <rect class="${muscleClass('core')}" onclick="genToggleMuscle('core')"
+    <rect class="${muscleClass('core')}" onclick="genToggleMuscle('core')" tabindex="0" role="button" aria-label="Core" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('core')}"
       x="84" y="132" width="32" height="62" rx="12"/>
 
     <!-- Left oblique -->
-    <path class="${muscleClass('core')}" onclick="genToggleMuscle('core')"
+    <path class="${muscleClass('core')}" onclick="genToggleMuscle('core')" tabindex="0" role="button" aria-label="Core" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('core')}"
       d="M50,92 L64,92 L70,200 L46,192 Z"/>
     <!-- Right oblique -->
-    <path class="${muscleClass('core')}" onclick="genToggleMuscle('core')"
+    <path class="${muscleClass('core')}" onclick="genToggleMuscle('core')" tabindex="0" role="button" aria-label="Core" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('core')}"
       d="M150,92 L136,92 L130,200 L154,192 Z"/>
 
     <!-- Left shoulder -->
-    <ellipse class="${muscleClass('shoulders')}" onclick="genToggleMuscle('shoulders')"
+    <ellipse class="${muscleClass('shoulders')}" onclick="genToggleMuscle('shoulders')" tabindex="0" role="button" aria-label="Shoulders" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('shoulders')}"
       cx="28" cy="97" rx="19" ry="17"/>
     <!-- Right shoulder -->
-    <ellipse class="${muscleClass('shoulders')}" onclick="genToggleMuscle('shoulders')"
+    <ellipse class="${muscleClass('shoulders')}" onclick="genToggleMuscle('shoulders')" tabindex="0" role="button" aria-label="Shoulders" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('shoulders')}"
       cx="172" cy="97" rx="19" ry="17"/>
 
     <!-- Left bicep -->
-    <ellipse class="${muscleClass('biceps')}" onclick="genToggleMuscle('biceps')"
+    <ellipse class="${muscleClass('biceps')}" onclick="genToggleMuscle('biceps')" tabindex="0" role="button" aria-label="Biceps" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('biceps')}"
       cx="18" cy="134" rx="13" ry="28"/>
     <!-- Right bicep -->
-    <ellipse class="${muscleClass('biceps')}" onclick="genToggleMuscle('biceps')"
+    <ellipse class="${muscleClass('biceps')}" onclick="genToggleMuscle('biceps')" tabindex="0" role="button" aria-label="Biceps" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('biceps')}"
       cx="182" cy="134" rx="13" ry="28"/>
 
     <!-- Left forearm -->
-    <ellipse class="${muscleClass('forearms')}" onclick="genToggleMuscle('forearms')"
+    <ellipse class="${muscleClass('forearms')}" onclick="genToggleMuscle('forearms')" tabindex="0" role="button" aria-label="Forearms" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('forearms')}"
       cx="13" cy="207" rx="11" ry="32"/>
     <!-- Right forearm -->
-    <ellipse class="${muscleClass('forearms')}" onclick="genToggleMuscle('forearms')"
+    <ellipse class="${muscleClass('forearms')}" onclick="genToggleMuscle('forearms')" tabindex="0" role="button" aria-label="Forearms" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('forearms')}"
       cx="187" cy="207" rx="11" ry="32"/>
 
     <!-- Left quad -->
-    <path class="${muscleClass('quads')}" onclick="genToggleMuscle('quads')"
+    <path class="${muscleClass('quads')}" onclick="genToggleMuscle('quads')" tabindex="0" role="button" aria-label="Quads" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('quads')}"
       d="M56,208 L76,206 L76,300 L52,303 Z"/>
     <!-- Right quad -->
-    <path class="${muscleClass('quads')}" onclick="genToggleMuscle('quads')"
+    <path class="${muscleClass('quads')}" onclick="genToggleMuscle('quads')" tabindex="0" role="button" aria-label="Quads" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('quads')}"
       d="M144,208 L124,206 L124,300 L148,303 Z"/>
 
     <!-- Left calf -->
-    <ellipse class="${muscleClass('calves')}" onclick="genToggleMuscle('calves')"
+    <ellipse class="${muscleClass('calves')}" onclick="genToggleMuscle('calves')" tabindex="0" role="button" aria-label="Calves" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('calves')}"
       cx="56" cy="352" rx="15" ry="40"/>
     <!-- Right calf -->
-    <ellipse class="${muscleClass('calves')}" onclick="genToggleMuscle('calves')"
+    <ellipse class="${muscleClass('calves')}" onclick="genToggleMuscle('calves')" tabindex="0" role="button" aria-label="Calves" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('calves')}"
       cx="144" cy="352" rx="15" ry="40"/>
 
     <!-- Muscle labels (visible on selected) -->
@@ -203,64 +203,64 @@ function bodyMapBack() {
 
     <!-- ── Muscle regions (back) ── -->
     <!-- Traps -->
-    <path class="${muscleClass('traps')}" onclick="genToggleMuscle('traps')"
+    <path class="${muscleClass('traps')}" onclick="genToggleMuscle('traps')" tabindex="0" role="button" aria-label="Traps" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('traps')}"
       d="M66,72 L100,67 L134,72 L126,114 L100,122 L74,114 Z"/>
 
     <!-- Upper back / rhomboids -->
-    <rect class="${muscleClass('back')}" onclick="genToggleMuscle('back')"
+    <rect class="${muscleClass('back')}" onclick="genToggleMuscle('back')" tabindex="0" role="button" aria-label="Back" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('back')}"
       x="76" y="116" width="48" height="48" rx="8"/>
 
     <!-- Lower back -->
-    <rect class="${muscleClass('lower back')}" onclick="genToggleMuscle('lower back')"
+    <rect class="${muscleClass('lower back')}" onclick="genToggleMuscle('lower back')" tabindex="0" role="button" aria-label="Lower Back" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('lower back')}"
       x="76" y="166" width="48" height="32" rx="6"/>
 
     <!-- Left lat -->
-    <path class="${muscleClass('back')}" onclick="genToggleMuscle('back')"
+    <path class="${muscleClass('back')}" onclick="genToggleMuscle('back')" tabindex="0" role="button" aria-label="Back" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('back')}"
       d="M44,94 L68,98 L74,202 L48,196 Z"/>
     <!-- Right lat -->
-    <path class="${muscleClass('back')}" onclick="genToggleMuscle('back')"
+    <path class="${muscleClass('back')}" onclick="genToggleMuscle('back')" tabindex="0" role="button" aria-label="Back" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('back')}"
       d="M156,94 L132,98 L126,202 L152,196 Z"/>
 
     <!-- Left rear delt -->
-    <ellipse class="${muscleClass('shoulders')}" onclick="genToggleMuscle('shoulders')"
+    <ellipse class="${muscleClass('shoulders')}" onclick="genToggleMuscle('shoulders')" tabindex="0" role="button" aria-label="Shoulders" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('shoulders')}"
       cx="28" cy="94" rx="19" ry="16"/>
     <!-- Right rear delt -->
-    <ellipse class="${muscleClass('shoulders')}" onclick="genToggleMuscle('shoulders')"
+    <ellipse class="${muscleClass('shoulders')}" onclick="genToggleMuscle('shoulders')" tabindex="0" role="button" aria-label="Shoulders" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('shoulders')}"
       cx="172" cy="94" rx="19" ry="16"/>
 
     <!-- Left tricep -->
-    <ellipse class="${muscleClass('triceps')}" onclick="genToggleMuscle('triceps')"
+    <ellipse class="${muscleClass('triceps')}" onclick="genToggleMuscle('triceps')" tabindex="0" role="button" aria-label="Triceps" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('triceps')}"
       cx="18" cy="134" rx="13" ry="28"/>
     <!-- Right tricep -->
-    <ellipse class="${muscleClass('triceps')}" onclick="genToggleMuscle('triceps')"
+    <ellipse class="${muscleClass('triceps')}" onclick="genToggleMuscle('triceps')" tabindex="0" role="button" aria-label="Triceps" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('triceps')}"
       cx="182" cy="134" rx="13" ry="28"/>
 
     <!-- Left forearm -->
-    <ellipse class="${muscleClass('forearms')}" onclick="genToggleMuscle('forearms')"
+    <ellipse class="${muscleClass('forearms')}" onclick="genToggleMuscle('forearms')" tabindex="0" role="button" aria-label="Forearms" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('forearms')}"
       cx="13" cy="207" rx="11" ry="32"/>
     <!-- Right forearm -->
-    <ellipse class="${muscleClass('forearms')}" onclick="genToggleMuscle('forearms')"
+    <ellipse class="${muscleClass('forearms')}" onclick="genToggleMuscle('forearms')" tabindex="0" role="button" aria-label="Forearms" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('forearms')}"
       cx="187" cy="207" rx="11" ry="32"/>
 
     <!-- Left glute -->
-    <path class="${muscleClass('glutes')}" onclick="genToggleMuscle('glutes')"
+    <path class="${muscleClass('glutes')}" onclick="genToggleMuscle('glutes')" tabindex="0" role="button" aria-label="Glutes" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('glutes')}"
       d="M52,206 L80,204 L86,258 L52,262 Z"/>
     <!-- Right glute -->
-    <path class="${muscleClass('glutes')}" onclick="genToggleMuscle('glutes')"
+    <path class="${muscleClass('glutes')}" onclick="genToggleMuscle('glutes')" tabindex="0" role="button" aria-label="Glutes" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('glutes')}"
       d="M148,206 L120,204 L114,258 L148,262 Z"/>
 
     <!-- Left hamstring -->
-    <path class="${muscleClass('hamstrings')}" onclick="genToggleMuscle('hamstrings')"
+    <path class="${muscleClass('hamstrings')}" onclick="genToggleMuscle('hamstrings')" tabindex="0" role="button" aria-label="Hamstrings" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('hamstrings')}"
       d="M52,264 L78,260 L76,302 L50,306 Z"/>
     <!-- Right hamstring -->
-    <path class="${muscleClass('hamstrings')}" onclick="genToggleMuscle('hamstrings')"
+    <path class="${muscleClass('hamstrings')}" onclick="genToggleMuscle('hamstrings')" tabindex="0" role="button" aria-label="Hamstrings" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('hamstrings')}"
       d="M148,264 L122,260 L124,302 L150,306 Z"/>
 
     <!-- Left calf -->
-    <ellipse class="${muscleClass('calves')}" onclick="genToggleMuscle('calves')"
+    <ellipse class="${muscleClass('calves')}" onclick="genToggleMuscle('calves')" tabindex="0" role="button" aria-label="Calves" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('calves')}"
       cx="56" cy="352" rx="15" ry="40"/>
     <!-- Right calf -->
-    <ellipse class="${muscleClass('calves')}" onclick="genToggleMuscle('calves')"
+    <ellipse class="${muscleClass('calves')}" onclick="genToggleMuscle('calves')" tabindex="0" role="button" aria-label="Calves" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();genToggleMuscle('calves')}"
       cx="144" cy="352" rx="15" ry="40"/>
 
     <!-- Labels -->
