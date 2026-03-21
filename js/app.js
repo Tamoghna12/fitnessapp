@@ -6,6 +6,7 @@ import { renderWorkout } from './render/workout.js';
 import { renderTrain } from './render/train.js';
 import { renderBuild } from './render/build.js';
 import { renderMe } from './render/me.js';
+import { renderCalculators } from './render/calculators.js';
 import { checkOnboarding } from './onboarding.js';
 
 loadState();
@@ -18,6 +19,7 @@ registerRoute('today', (subPage) => {
 registerRoute('train', renderTrain);
 registerRoute('build', renderBuild);
 registerRoute('me', renderMe);
+registerRoute('calc', renderCalculators);
 
 initAuth(); // fires rerender after auth state resolves
 
