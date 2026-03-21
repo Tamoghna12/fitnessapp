@@ -77,7 +77,7 @@ function renderStep(step) {
         ${s.options.map(opt => {
           const isSelected = Array.isArray(selected) && selected.includes(opt.value);
           return `
-            <button class="onb-btn" onclick="onboardingToggle(${step}, '${s.key}', ${JSON.stringify(opt.value)})"
+            <button class="onb-btn" onclick="onboardingToggle(${step}, '${s.key}', ${JSON.stringify(opt.value).replace(/"/g, '&quot;')})"
               style="background:var(--bg-card);border:2px solid ${isSelected ? 'var(--accent)' : 'var(--border)'};border-radius:var(--radius);padding:12px 20px;color:var(--text-primary);font-size:0.95rem;cursor:pointer;transition:var(--transition)">
               ${isSelected ? '✓ ' : ''}${opt.label}
             </button>
@@ -89,7 +89,7 @@ function renderStep(step) {
     : `
       <div style="display:flex;flex-wrap:wrap;gap:12px">
         ${s.options.map(opt => `
-          <button class="onb-btn" onclick="onboardingSelect(${step}, '${s.key}', ${JSON.stringify(opt.value)})"
+          <button class="onb-btn" onclick="onboardingSelect(${step}, '${s.key}', ${JSON.stringify(opt.value).replace(/"/g, '&quot;')})"
             style="background:var(--bg-card);border:2px solid var(--border);border-radius:var(--radius);padding:12px 20px;color:var(--text-primary);font-size:0.95rem;cursor:pointer;transition:var(--transition)">
             ${opt.label}
           </button>
