@@ -1,6 +1,5 @@
 /**
- * Anabolic Aliens Workout Library
- * Source: https://anabolicaliens.com/blogs/the-signal/tagged/workouts
+ * Community Workout Library
  * 50 workouts across bodyweight, dumbbell, barbell, kettlebell, resistance band
  *
  * Format: Two workout types:

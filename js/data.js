@@ -129,7 +129,7 @@ export function parseDarebeeExercise(dbEx) {
   return { exercise, slot };
 }
 
-// ── Anabolic Aliens parser ──────────────────────────────────────────────────
+// ── Community workouts parser ────────────────────────────────────────────────
 export function parseAnabolicAliensExercise(aaEx, workoutEquipment) {
   const exercise = makeExercise({
     id: `aa-${aaEx.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`,
@@ -137,7 +137,7 @@ export function parseAnabolicAliensExercise(aaEx, workoutEquipment) {
     muscleGroup: aaEx.muscles || '',
     equipment: workoutEquipment || 'bodyweight',
     instructions: aaEx.duration ? `Timed: ${aaEx.duration}` : '',
-    source: 'anabolic-aliens',
+    source: 'community',
   });
 
   // Timed exercises: 1 rep = 1 timed interval
@@ -154,7 +154,7 @@ export function parseAnabolicAliensExercise(aaEx, workoutEquipment) {
 }
 
 /**
- * Returns all Anabolic Aliens workouts as importable program templates.
+ * Returns all community workouts as importable program templates.
  * Each workout becomes a single-day program with its exercises as slots.
  */
 export function getAnabolicAliensPrograms() {
@@ -172,7 +172,7 @@ export function getAnabolicAliensPrograms() {
       ...w,
       _program: makeProgram({
         id: w.id,
-        name: `AA: ${w.name}`,
+        name: w.name,
         totalWeeks: 8,
         isTemplate: true,
         days: [
@@ -224,7 +224,7 @@ export function getAllExercises(customExercises = {}) {
       source: ex.source || 'library',
     }));
 
-  // Anabolic Aliens exercises
+  // Community workout exercises
   const aaExercises = (typeof ANABOLIC_ALIENS_WORKOUTS !== 'undefined' ? ANABOLIC_ALIENS_WORKOUTS : [])
     .flatMap(w => (w.exercises || []).map(ex => parseAnabolicAliensExercise(ex, w.equipment).exercise));
 
