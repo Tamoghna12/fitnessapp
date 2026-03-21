@@ -11,14 +11,14 @@
  */
 
 // eslint-disable-next-line no-unused-vars
-var ANABOLIC_ALIENS_WORKOUTS = [
+var COMMUNITY_WORKOUTS = [
 
   // ──────────────────────────────────────────────────────────
   //  BODYWEIGHT / AT HOME (No Equipment)
   // ──────────────────────────────────────────────────────────
 
   {
-    id: 'aa-abs-obliques',
+    id: 'cw-abs-obliques',
     name: '5-Min Abs & Obliques',
     equipment: 'bodyweight',
     muscles: 'Abs, Obliques',
@@ -40,7 +40,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-obliques',
+    id: 'cw-obliques',
     name: '5-Min Oblique Workout',
     equipment: 'bodyweight',
     muscles: 'Obliques',
@@ -57,7 +57,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-upper-abs-tabata',
+    id: 'cw-upper-abs-tabata',
     name: '4-Min Upper Abs Tabata',
     equipment: 'bodyweight',
     muscles: 'Upper Abs',
@@ -73,7 +73,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-lower-abs',
+    id: 'cw-lower-abs',
     name: '5-Min Lower Ab Workout',
     equipment: 'bodyweight',
     muscles: 'Lower Abs',
@@ -90,7 +90,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-middle-abs',
+    id: 'cw-middle-abs',
     name: '5-Min Middle Ab Workout',
     equipment: 'bodyweight',
     muscles: 'Abs, Core',
@@ -107,7 +107,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-core-isometric',
+    id: 'cw-core-isometric',
     name: '5-Min Core Workout',
     equipment: 'bodyweight',
     muscles: 'Core, Abs',
@@ -124,7 +124,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-tabata-obliques',
+    id: 'cw-tabata-obliques',
     name: '4-Min Tabata Oblique Workout',
     equipment: 'bodyweight',
     muscles: 'Obliques, Core',
@@ -140,7 +140,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bw-chest',
+    id: 'cw-bw-chest',
     name: '5-Min At Home Chest',
     equipment: 'bodyweight',
     muscles: 'Chest',
@@ -157,7 +157,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bw-back',
+    id: 'cw-bw-back',
     name: '5-Min At Home Back',
     equipment: 'bodyweight',
     muscles: 'Back, Lats',
@@ -174,7 +174,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bw-shoulders',
+    id: 'cw-bw-shoulders',
     name: '5-Min At Home Shoulders',
     equipment: 'bodyweight',
     muscles: 'Shoulders, Deltoids',
@@ -191,7 +191,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bw-triceps',
+    id: 'cw-bw-triceps',
     name: '5-Min At Home Triceps',
     equipment: 'bodyweight',
     muscles: 'Triceps',
@@ -208,7 +208,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-tabata-biceps-bw',
+    id: 'cw-tabata-biceps-bw',
     name: '4-Min At Home Bicep HIIT',
     equipment: 'bodyweight',
     muscles: 'Biceps',
@@ -224,7 +224,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-tabata-back-bw',
+    id: 'cw-tabata-back-bw',
     name: '4-Min At Home Back Tabata',
     equipment: 'bodyweight',
     muscles: 'Back, Lats',
@@ -240,7 +240,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bw-quads',
+    id: 'cw-bw-quads',
     name: '5-Min Bodyweight Quads',
     equipment: 'bodyweight',
     muscles: 'Quads',
@@ -257,7 +257,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bw-legs',
+    id: 'cw-bw-legs',
     name: '5-Min At Home Legs',
     equipment: 'bodyweight',
     muscles: 'Quads, Glutes, Hamstrings, Calves',
@@ -274,7 +274,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bw-hip-glutes',
+    id: 'cw-bw-hip-glutes',
     name: '5-Min Hip & Glute Workout',
     equipment: 'bodyweight',
     muscles: 'Hips, Glutes',
@@ -291,7 +291,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bw-calves',
+    id: 'cw-bw-calves',
     name: '5-Min At Home Calves',
     equipment: 'bodyweight',
     muscles: 'Calves',
@@ -308,7 +308,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bw-traps',
+    id: 'cw-bw-traps',
     name: '5-Min At Home Traps',
     equipment: 'bodyweight',
     muscles: 'Traps',
@@ -325,7 +325,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bw-forearms',
+    id: 'cw-bw-forearms',
     name: '5-Min At Home Forearms',
     equipment: 'bodyweight',
     muscles: 'Forearms',
@@ -342,7 +342,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-tabata-forearms',
+    id: 'cw-tabata-forearms',
     name: '4-Min Tabata Forearms',
     equipment: 'bodyweight',
     muscles: 'Forearms',
@@ -358,7 +358,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-tabata-cardio',
+    id: 'cw-tabata-cardio',
     name: '4-Min Fat Burning Cardio Tabata',
     equipment: 'bodyweight',
     muscles: 'Full Body',
@@ -374,7 +374,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bw-upper-body-10',
+    id: 'cw-bw-upper-body-10',
     name: '10-Min Upper Body (No Equipment)',
     equipment: 'bodyweight',
     muscles: 'Chest, Back, Shoulders, Arms',
@@ -400,7 +400,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   // ──────────────────────────────────────────────────────────
 
   {
-    id: 'aa-db-forearms',
+    id: 'cw-db-forearms',
     name: '5-Min DB Forearm Workout',
     equipment: 'dumbbells',
     muscles: 'Forearms',
@@ -417,7 +417,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-tabata-db-biceps',
+    id: 'cw-tabata-db-biceps',
     name: '4-Min Tabata DB Biceps',
     equipment: 'dumbbells',
     muscles: 'Biceps',
@@ -433,7 +433,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-db-biceps',
+    id: 'cw-db-biceps',
     name: '5-Min DB Bicep Workout',
     equipment: 'dumbbells',
     muscles: 'Biceps',
@@ -450,7 +450,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-tabata-db-triceps',
+    id: 'cw-tabata-db-triceps',
     name: '4-Min Tabata DB Triceps',
     equipment: 'dumbbells',
     muscles: 'Triceps',
@@ -466,7 +466,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-tabata-db-chest',
+    id: 'cw-tabata-db-chest',
     name: '4-Min Tabata DB Chest',
     equipment: 'dumbbells',
     muscles: 'Chest',
@@ -482,7 +482,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-db-chest',
+    id: 'cw-db-chest',
     name: '5-Min DB Chest Workout',
     equipment: 'dumbbells',
     muscles: 'Chest',
@@ -499,7 +499,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-db-shoulders',
+    id: 'cw-db-shoulders',
     name: '5-Min DB Shoulder Workout',
     equipment: 'dumbbells',
     muscles: 'Shoulders, Deltoids',
@@ -516,7 +516,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-db-back',
+    id: 'cw-db-back',
     name: '5-Min DB Back Workout',
     equipment: 'dumbbells',
     muscles: 'Back, Traps, Lats',
@@ -533,7 +533,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-db-traps',
+    id: 'cw-db-traps',
     name: '5-Min DB Trap Workout',
     equipment: 'dumbbells',
     muscles: 'Traps',
@@ -550,7 +550,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-db-legs',
+    id: 'cw-db-legs',
     name: '5-Min DB Leg Workout',
     equipment: 'dumbbells',
     muscles: 'Quads, Hamstrings, Glutes, Calves',
@@ -567,7 +567,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-db-calves',
+    id: 'cw-db-calves',
     name: '5-Min DB Calf Workout',
     equipment: 'dumbbells',
     muscles: 'Calves',
@@ -588,7 +588,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   // ──────────────────────────────────────────────────────────
 
   {
-    id: 'aa-bb-shoulders',
+    id: 'cw-bb-shoulders',
     name: '5-Min Barbell Shoulders',
     equipment: 'barbell',
     muscles: 'Shoulders, Deltoids',
@@ -605,7 +605,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bb-biceps',
+    id: 'cw-bb-biceps',
     name: '5-Min Barbell Biceps',
     equipment: 'barbell',
     muscles: 'Biceps',
@@ -622,7 +622,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bb-triceps',
+    id: 'cw-bb-triceps',
     name: '5-Min Barbell Triceps',
     equipment: 'barbell',
     muscles: 'Triceps',
@@ -639,7 +639,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bb-chest',
+    id: 'cw-bb-chest',
     name: '5-Min Barbell Chest',
     equipment: 'barbell',
     muscles: 'Chest',
@@ -656,7 +656,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bb-back',
+    id: 'cw-bb-back',
     name: '5-Min Barbell Back',
     equipment: 'barbell',
     muscles: 'Back, Traps, Lats',
@@ -673,7 +673,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-bb-legs',
+    id: 'cw-bb-legs',
     name: '5-Min Barbell Legs',
     equipment: 'barbell',
     muscles: 'Quads, Glutes, Hamstrings',
@@ -694,7 +694,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   // ──────────────────────────────────────────────────────────
 
   {
-    id: 'aa-kb-traps',
+    id: 'cw-kb-traps',
     name: '5-Min KB Trap Workout',
     equipment: 'kettlebell',
     muscles: 'Traps',
@@ -711,7 +711,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-kb-back',
+    id: 'cw-kb-back',
     name: '5-Min KB Back Workout',
     equipment: 'kettlebell',
     muscles: 'Back, Lats',
@@ -728,7 +728,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-kb-triceps',
+    id: 'cw-kb-triceps',
     name: '5-Min KB Tricep Workout',
     equipment: 'kettlebell',
     muscles: 'Triceps',
@@ -745,7 +745,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-kb-biceps',
+    id: 'cw-kb-biceps',
     name: '5-Min KB Bicep Workout',
     equipment: 'kettlebell',
     muscles: 'Biceps',
@@ -762,7 +762,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-kb-shoulders',
+    id: 'cw-kb-shoulders',
     name: '5-Min KB Shoulder Workout',
     equipment: 'kettlebell',
     muscles: 'Shoulders, Deltoids',
@@ -783,7 +783,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   // ──────────────────────────────────────────────────────────
 
   {
-    id: 'aa-rb-chest',
+    id: 'cw-rb-chest',
     name: '5-Min Band Chest Workout',
     equipment: 'resistance band',
     muscles: 'Chest',
@@ -800,7 +800,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-rb-legs',
+    id: 'cw-rb-legs',
     name: '5-Min Band Leg Workout',
     equipment: 'resistance band',
     muscles: 'Quads, Hamstrings, Glutes, Calves',
@@ -817,7 +817,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-rb-shoulders',
+    id: 'cw-rb-shoulders',
     name: '5-Min Band Shoulder Workout',
     equipment: 'resistance band',
     muscles: 'Shoulders, Deltoids',
@@ -834,7 +834,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-rb-triceps',
+    id: 'cw-rb-triceps',
     name: '5-Min Band Tricep Workout',
     equipment: 'resistance band',
     muscles: 'Triceps',
@@ -851,7 +851,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-rb-biceps',
+    id: 'cw-rb-biceps',
     name: '5-Min Band Bicep Workout',
     equipment: 'resistance band',
     muscles: 'Biceps',
@@ -868,7 +868,7 @@ var ANABOLIC_ALIENS_WORKOUTS = [
   },
 
   {
-    id: 'aa-rb-back',
+    id: 'cw-rb-back',
     name: '5-Min Band Back Workout',
     equipment: 'resistance band',
     muscles: 'Back, Lats',

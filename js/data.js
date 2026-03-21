@@ -132,7 +132,7 @@ export function parseDarebeeExercise(dbEx) {
 // ── Community workouts parser ────────────────────────────────────────────────
 export function parseAnabolicAliensExercise(aaEx, workoutEquipment) {
   const exercise = makeExercise({
-    id: `aa-${aaEx.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`,
+    id: `cw-${aaEx.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}`,
     name: aaEx.name,
     muscleGroup: aaEx.muscles || '',
     equipment: workoutEquipment || 'bodyweight',
@@ -158,7 +158,7 @@ export function parseAnabolicAliensExercise(aaEx, workoutEquipment) {
  * Each workout becomes a single-day program with its exercises as slots.
  */
 export function getAnabolicAliensPrograms() {
-  const raw = typeof ANABOLIC_ALIENS_WORKOUTS !== 'undefined' ? ANABOLIC_ALIENS_WORKOUTS : [];
+  const raw = typeof COMMUNITY_WORKOUTS !== 'undefined' ? COMMUNITY_WORKOUTS : [];
   return raw.map(w => {
     const slots = w.exercises.map(ex => {
       const { exercise, slot } = parseAnabolicAliensExercise(ex, w.equipment);
@@ -225,7 +225,7 @@ export function getAllExercises(customExercises = {}) {
     }));
 
   // Community workout exercises
-  const aaExercises = (typeof ANABOLIC_ALIENS_WORKOUTS !== 'undefined' ? ANABOLIC_ALIENS_WORKOUTS : [])
+  const aaExercises = (typeof COMMUNITY_WORKOUTS !== 'undefined' ? COMMUNITY_WORKOUTS : [])
     .flatMap(w => (w.exercises || []).map(ex => parseAnabolicAliensExercise(ex, w.equipment).exercise));
 
   // Deduplicate by name (builtin takes precedence, then library, then AA, then darebee, then custom)

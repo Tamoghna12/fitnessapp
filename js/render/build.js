@@ -598,7 +598,7 @@ function renderDarebeePickerBody() {
 }
 
 function renderAAPickerBody() {
-  const workouts = typeof ANABOLIC_ALIENS_WORKOUTS !== 'undefined' ? ANABOLIC_ALIENS_WORKOUTS : [];
+  const workouts = typeof COMMUNITY_WORKOUTS !== 'undefined' ? COMMUNITY_WORKOUTS : [];
   const q = _pickerSearch.toLowerCase();
   const filtered = q
     ? workouts.filter(w =>
@@ -785,7 +785,7 @@ window.buildStartAAImport = function(programId, dow) {
 };
 
 window.buildImportAAWorkout = function(programId, dow, workoutId) {
-  const workouts = typeof ANABOLIC_ALIENS_WORKOUTS !== 'undefined' ? ANABOLIC_ALIENS_WORKOUTS : [];
+  const workouts = typeof COMMUNITY_WORKOUTS !== 'undefined' ? COMMUNITY_WORKOUTS : [];
   const w = workouts.find(x => x.id === workoutId);
   if (!w) return;
   const prog = getProgram(programId);
