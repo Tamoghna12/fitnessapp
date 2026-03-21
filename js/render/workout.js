@@ -60,7 +60,7 @@ function renderActiveWorkout() {
     <div class="page active">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
         <div>
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:2px;line-height:1">${template.name}</div>
+          <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:800;letter-spacing:-0.5px;line-height:1">${template.name}</div>
           <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--text-muted);letter-spacing:1px">WEEK ${currentISOWeekNumber()}</div>
         </div>
         <button class="btn btn-accent" style="letter-spacing:1px" onclick="finishWorkout()">Finish</button>

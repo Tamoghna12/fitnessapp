@@ -104,7 +104,7 @@ export function renderGenerator() {
           style="width:100%;margin-bottom:1.5rem;accent-color:var(--accent);cursor:pointer">
 
         <button class="btn btn-accent"
-          style="width:100%;padding:14px;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px"
+          style="width:100%;padding:14px;font-size:0.95rem;font-weight:800;letter-spacing:0.5px"
           onclick="runGenerator()">
           ⚡ Generate Workout
         </button>
